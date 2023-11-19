@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">nomad</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="bar_menu">Bar Menu</string>
+    <string name="dessert_menu">Dessert Menu</string>
+
+    <string name="searchEng">Search</string>
+    <string name="searchRus">Пойск</string>
+    <string name="searchKaz">Іздеу</string>
+
+    <string name="orderEng">Your order</string>
+    <string name="orderRus">Ваш заказ</string>
+    <string name="orderKaz">Сіздің тапсырысыңыз</string>
+
+    <string name="eng">ENG</string>
+    <string name="rus">RUS</string>
+    <string name="kaz">KAZ</string>
+</resources>

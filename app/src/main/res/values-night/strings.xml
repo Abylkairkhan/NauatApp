@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bar_menu">Bar Menu</string>
+    <string name="dessert_menu">Dessert Menu</string>
+    <string name="breakfasts">Breakfasts</string>
+    <string name="salads">Salads</string>
+    <string name="first_courses">First Courses</string>
+    <string name="eastern_shurpa">Eastern Shurpa</string>
+    <string name="hot_snacks">Hot snacks</string>
+    <string name="cold_snacks">Cold snacks</string>
+    <string name="italian_cuisine">Italian cuisine</string>
+    <string name="kazakh_cuisine">Kazakh cuisine</string>
+    <string name="uygrian_cuisine">Uygrian cuisine</string>
+    <string name="uzbek_cuisine">Uzbek cuisine</string>
+    <string name="turkish_cuisine">Turkish cuisine</string>
+    <string name="georgian_cuisine">Georgian cuisine</string>
+    <string name="bread">Bread</string>
+    <string name="samsa">Samsa</string>
+    <string name="kebabs">Kebabs</string>
+    <string name="sushi">Sushi</string>
+    <string name="rolls">Rolls</string>
+    <string name="seth">Seth</string>
+    <string name="pizza">Pizza</string>
+    <string name="childrens_menu">Childrens menu</string>
+    <string name="side_dishes">Side Dishes</string>
+    <string name="sauces">sauces</string>
+    <string name="rice_porridge">Rice porridge</string>
+</resources>
