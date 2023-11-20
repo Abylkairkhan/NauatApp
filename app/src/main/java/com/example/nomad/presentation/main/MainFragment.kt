@@ -18,11 +18,11 @@ import com.example.nomad.domain.adapters.ProductAdapter
 import com.example.nomad.domain.models.FoodTypeModel
 import com.example.nomad.domain.models.ProductModel
 import com.example.nomad.domain.use_case.BillCounter
-import com.example.nomad.domain.use_case.FragmentUtil
 import com.example.nomad.domain.use_case.LanguageController
+import com.example.nomad.domain.use_case.ProductListManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.AddClickListener {
+class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Listener {
 
     private lateinit var binding: FragmentMainBinding
     private val viewModel by viewModel<MainViewModel>()
@@ -55,8 +55,6 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.AddCl
         search()
         showHideBill()
         billClick()
-
-
 
         with(binding) {
             mainMenu.setOnClickListener { scrollBarListener(mainMenu, TopScrollView.MAIN) }
@@ -92,7 +90,7 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.AddCl
     private fun languageController() {
 
         binding.language.text = getString(LanguageController.getAbbreviation())
-
+        binding.searchView.text = getString(LanguageController.getSearch())
 
         binding.language.setOnClickListener {
             LanguageController.setLanguage()
@@ -108,14 +106,12 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.AddCl
                 }
             }
 
-            FragmentUtil.refreshFragment(requireContext())
-
             viewModel.foodTypeList.observe(viewLifecycleOwner) {
                 pagerItemAdapter!!.setItems(it)
             }
 
             viewModel.productList.observe(viewLifecycleOwner) { list ->
-                BillCounter.setBucketProducts(list)
+                ProductListManager.setProducts(list)
                 productAdapter!!.setItems()
             }
         }
@@ -146,7 +142,7 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.AddCl
 
         viewModel.productList.observe(viewLifecycleOwner) { list ->
             productAdapter = ProductAdapter(this)
-            BillCounter.setBucketProducts(list)
+            if (ProductListManager.getProducts().isEmpty()) ProductListManager.setProducts(list)
             productAdapter!!.setItems()
             binding.RecView2.adapter = productAdapter
             binding.RecView2.layoutManager =
@@ -160,6 +156,7 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.AddCl
             }
         }
 
+//        что то не так
         viewModel.position.observe(viewLifecycleOwner) {
             val y = binding.RecView2.getChildAt(it).y
             binding.nestedScrollView.fling(0)
@@ -228,8 +225,7 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.AddCl
         pagerItemAdapter!!.selectItem(position)
     }
 
-    override fun onItemPlusClick(product: ProductModel, addToBill: Boolean) {
-        BillCounter.setBill(product.price, addToBill)
+    override fun onClick() {
         if (BillCounter.getBill() > 0) {
             binding.bill.visibility = View.VISIBLE
             binding.bill.text = BillCounter.getBill().toString()

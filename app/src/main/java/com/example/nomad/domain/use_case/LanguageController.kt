@@ -14,8 +14,24 @@ object LanguageController {
 
     private var currentLanguage = Language.RUS
 
+    fun getClear(): Int {
+        return when (currentLanguage) {
+            Language.RUS -> R.string.clearRus
+            Language.KAZ -> R.string.clearKaz
+            Language.ENG -> R.string.clearEng
+        }
+    }
+
+    fun getSave(): Int {
+        return when (currentLanguage) {
+            Language.RUS -> R.string.saveRus
+            Language.KAZ -> R.string.saveKaz
+            Language.ENG -> R.string.saveEng
+        }
+    }
+
     fun getOrder(): Int {
-        return when(currentLanguage) {
+        return when (currentLanguage) {
             Language.RUS -> R.string.orderRus
             Language.KAZ -> R.string.orderKaz
             Language.ENG -> R.string.orderEng
@@ -23,7 +39,7 @@ object LanguageController {
     }
 
     fun getSearch(): Int {
-        return when(currentLanguage) {
+        return when (currentLanguage) {
             Language.RUS -> R.string.searchRus
             Language.KAZ -> R.string.searchKaz
             Language.ENG -> R.string.searchEng

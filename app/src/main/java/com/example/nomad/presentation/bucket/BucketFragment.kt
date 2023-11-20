@@ -8,13 +8,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.nomad.R
 import com.example.nomad.databinding.FragmentBucketBinding
 import com.example.nomad.domain.adapters.ProductAdapter
 import com.example.nomad.domain.models.ProductModel
 import com.example.nomad.domain.use_case.BillCounter
 import com.example.nomad.domain.use_case.LanguageController
+import com.example.nomad.domain.use_case.ProductListManager
 
-class BucketFragment : Fragment(), ProductAdapter.AddClickListener {
+class BucketFragment : Fragment(), ProductAdapter.Listener {
 
     private lateinit var binding: FragmentBucketBinding
     private var productAdapter: ProductAdapter? = null
@@ -30,33 +32,32 @@ class BucketFragment : Fragment(), ProductAdapter.AddClickListener {
     ): View {
         binding = FragmentBucketBinding.inflate(inflater, container, false)
         binding.orderText.text = getString(LanguageController.getOrder())
+        binding.button.text = getString(LanguageController.getClear())
         backButton()
         initRecView()
 
         return binding.root
     }
 
-    private fun backButton() {
-        binding.backButton.setOnClickListener {
-            Navigation.findNavController(requireView()).popBackStack()
-        }
-    }
-
     private fun initRecView() {
         val data = mutableListOf<ProductModel>()
-        BillCounter.getBucketProducts().forEach {
+        ProductListManager.getProducts().forEach {
             if (it.countInBucket > 0) {
                 data.add(it)
             }
         }
-        Log.d("MyLog", "data size: " + data.size.toString())
         productAdapter!!.setSortedItems(data)
         binding.RecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.RecyclerView.adapter = productAdapter
     }
 
-    override fun onItemPlusClick(product: ProductModel, addToBill: Boolean) {
-        BillCounter.setBill(product.price, addToBill)
-        initRecView()
+    private fun backButton() {
+        binding.backButton.setOnClickListener {
+            Navigation.findNavController(requireView()).navigate(R.id.bucket_to_main)
+        }
+    }
+
+    override fun onClick() {
+
     }
 }

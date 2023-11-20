@@ -10,14 +10,16 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.nomad.R
 import com.example.nomad.databinding.FragmentSearchBinding
 import com.example.nomad.domain.adapters.ProductAdapter
 import com.example.nomad.domain.models.ProductModel
 import com.example.nomad.domain.use_case.BillCounter
 import com.example.nomad.domain.use_case.LanguageController
+import com.example.nomad.domain.use_case.ProductListManager
 
 
-class SearchFragment : Fragment(), ProductAdapter.AddClickListener {
+class SearchFragment : Fragment(), ProductAdapter.Listener {
 
     private lateinit var binding: FragmentSearchBinding
     private var productAdapter: ProductAdapter? = null
@@ -34,7 +36,15 @@ class SearchFragment : Fragment(), ProductAdapter.AddClickListener {
         backButton()
         observeProductList()
         filterList()
+        language()
         return binding.root
+    }
+
+    private fun language() {
+        with(binding) {
+            searchView.queryHint = getString(LanguageController.getSearch())
+            button.text = getString(LanguageController.getSave())
+        }
     }
 
     private fun filterList() {
@@ -48,7 +58,7 @@ class SearchFragment : Fragment(), ProductAdapter.AddClickListener {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (!newText.isNullOrEmpty()) {
-                    val sortedList = BillCounter.getBucketProducts().filter { product ->
+                    val sortedList = ProductListManager.getProducts().filter { product ->
                         when(LanguageController.getLanguage()){
                             LanguageController.Language.RUS -> product.nameRus.contains(newText, true)
                             LanguageController.Language.KAZ -> product.nameKaz.contains(newText, true)
@@ -76,11 +86,11 @@ class SearchFragment : Fragment(), ProductAdapter.AddClickListener {
 
     private fun backButton() {
         binding.button.setOnClickListener {
-            Navigation.findNavController(requireView()).popBackStack()
+            Navigation.findNavController(requireView()).navigate(R.id.search_to_main)
         }
     }
 
-    override fun onItemPlusClick(product: ProductModel, addToBill: Boolean) {
-        BillCounter.setBill(product.price, addToBill)
+    override fun onClick() {
+
     }
 }

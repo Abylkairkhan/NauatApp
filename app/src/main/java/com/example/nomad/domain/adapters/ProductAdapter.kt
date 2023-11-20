@@ -1,5 +1,6 @@
 package com.example.nomad.domain.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import com.example.nomad.databinding.ProductItemWithoutImgBinding
 import com.example.nomad.domain.models.ProductModel
 import com.example.nomad.domain.use_case.BillCounter
 import com.example.nomad.domain.use_case.LanguageController
+import com.example.nomad.domain.use_case.ProductListManager
 
 
 const val CARD_WITH_IMAGE = 0
@@ -17,17 +19,17 @@ const val CARD_WITHOUT_IMAGE = 1
 const val CARD_DIVIDER = 2
 
 class ProductAdapter(
-    private val listener: AddClickListener
+    val listener: Listener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var productList: List<ProductModel> = mutableListOf()
 
     fun setItems() {
-        productList = BillCounter.getBucketProducts()
+        productList = ProductListManager.getProducts()
         notifyDataSetChanged()
     }
 
-    fun setSortedItems(data : List<ProductModel>) {
+    fun setSortedItems(data: List<ProductModel>) {
         productList = data
         notifyDataSetChanged()
     }
@@ -44,14 +46,16 @@ class ProductAdapter(
                 count.text = product.countInBucket.toString()
 
                 plusBtn.setOnClickListener {
-                    product.countInBucket+=1
-                    listener.onItemPlusClick(product, true)
+                    BillCounter.setBill(product.price, true)
+                    ProductListManager.addCountToProduct(position, true)
+                    listener.onClick()
                     notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
-                    product.countInBucket-=1
-                    listener.onItemPlusClick(product, false)
+                    BillCounter.setBill(product.price, false)
+                    ProductListManager.addCountToProduct(position, false)
+                    listener.onClick()
                     notifyItemChanged(position)
                 }
 
@@ -77,14 +81,16 @@ class ProductAdapter(
                 count.text = product.countInBucket.toString()
 
                 plusBtn.setOnClickListener {
-                    product.countInBucket+=1
-                    listener.onItemPlusClick(product, true)
+                    BillCounter.setBill(product.price, true)
+                    ProductListManager.addCountToProduct(position, true)
+                    listener.onClick()
                     notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
-                    product.countInBucket-=1
-                    listener.onItemPlusClick(product, false)
+                    BillCounter.setBill(product.price, false)
+                    ProductListManager.addCountToProduct(position, false)
+                    listener.onClick()
                     notifyItemChanged(position)
                 }
 
@@ -134,7 +140,7 @@ class ProductAdapter(
         return productList.size
     }
 
-    interface AddClickListener {
-        fun onItemPlusClick(product: ProductModel, addToBill: Boolean)
+    interface Listener {
+        fun onClick()
     }
 }

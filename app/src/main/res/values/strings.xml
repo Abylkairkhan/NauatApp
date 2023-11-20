@@ -6,6 +6,14 @@
     <string name="bar_menu">Bar Menu</string>
     <string name="dessert_menu">Dessert Menu</string>
 
+    <string name="clearEng">Clear bucket</string>
+    <string name="clearRus">Очистить корзину</string>
+    <string name="clearKaz">Тапсырысты тазарту</string>
+
+    <string name="saveEng">Save</string>
+    <string name="saveRus">Сохранить</string>
+    <string name="saveKaz">Сақтау</string>
+
     <string name="searchEng">Search</string>
     <string name="searchRus">Пойск</string>
     <string name="searchKaz">Іздеу</string>
