@@ -44,17 +44,13 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
     ): View {
         binding = FragmentMainBinding.inflate(inflater, container, false)
 
-        with(binding) {
-            appBar.visibility = View.GONE
-            nestedScrollView.visibility = View.GONE
-            linearLayout.visibility = View.GONE
-        }
+        navigationToBucket()
 
         observers()
         languageController()
         search()
         showHideBill()
-        billClick()
+
 
         with(binding) {
             mainMenu.setOnClickListener { scrollBarListener(mainMenu, TopScrollView.MAIN) }
@@ -65,20 +61,21 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
         return binding.root
     }
 
-    private fun billClick() {
-        binding.bill.setOnClickListener {
+    private fun navigationToBucket() {
+        binding.Bill.setOnClickListener {
             Navigation.findNavController(requireView()).navigate(R.id.main_to_bucket)
         }
     }
 
+//    переписать нужно
     private fun showHideBill() {
-        if (BillCounter.getBill() > 0) {
-            binding.bill.visibility = View.VISIBLE
-            binding.bill.text = BillCounter.getBill().toString()
-        } else if (BillCounter.getBill() <= 0) {
-            binding.bill.visibility = View.GONE
-            binding.bill.text = null
-        }
+//        if (BillCounter.getBill() > 0) {
+//            binding.bill.visibility = View.VISIBLE
+//            binding.bill.text = BillCounter.getBill().toString()
+//        } else if (BillCounter.getBill() <= 0) {
+//            binding.bill.visibility = View.GONE
+//            binding.bill.text = null
+//        }
     }
 
     private fun search() {
@@ -89,32 +86,32 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
 
     private fun languageController() {
 
-        binding.language.text = getString(LanguageController.getAbbreviation())
-        binding.searchView.text = getString(LanguageController.getSearch())
-
-        binding.language.setOnClickListener {
-            LanguageController.setLanguage()
-
-            binding.language.text = getString(LanguageController.getAbbreviation())
-            binding.searchView.text = getString(LanguageController.getSearch())
-
-            viewModel.mainMenuList.value?.let { list ->
-                with(binding) {
-                    textView1.text = LanguageController.getMainMenuLanguage(list[0])
-                    textView2.text = LanguageController.getMainMenuLanguage(list[1])
-                    textView3.text = LanguageController.getMainMenuLanguage(list[2])
-                }
-            }
-
-            viewModel.foodTypeList.observe(viewLifecycleOwner) {
-                pagerItemAdapter!!.setItems(it)
-            }
-
-            viewModel.productList.observe(viewLifecycleOwner) { list ->
-                ProductListManager.setProducts(list)
-                productAdapter!!.setItems()
-            }
-        }
+//        binding.language.text = getString(LanguageController.getAbbreviation())
+//        binding.searchView.text = getString(LanguageController.getSearch())
+//
+//        binding.language.setOnClickListener {
+//            LanguageController.setLanguage()
+//
+//            binding.language.text = getString(LanguageController.getAbbreviation())
+//            binding.searchView.text = getString(LanguageController.getSearch())
+//
+//            viewModel.mainMenuList.value?.let { list ->
+//                with(binding) {
+//                    textView1.text = LanguageController.getMainMenuLanguage(list[0])
+//                    textView2.text = LanguageController.getMainMenuLanguage(list[1])
+//                    textView3.text = LanguageController.getMainMenuLanguage(list[2])
+//                }
+//            }
+//
+//            viewModel.foodTypeList.observe(viewLifecycleOwner) {
+//                pagerItemAdapter!!.setItems(it)
+//            }
+//
+//            viewModel.productList.observe(viewLifecycleOwner) { list ->
+//                ProductListManager.setProducts(list)
+//                productAdapter!!.setItems()
+//            }
+//        }
     }
 
     private fun observers() {
@@ -149,18 +146,18 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
                 LinearLayoutManager(requireContext())
 
             with(binding) {
-                progressBar.visibility = View.GONE
-                appBar.visibility = View.VISIBLE
-                nestedScrollView.visibility = View.VISIBLE
-                linearLayout.visibility = View.VISIBLE
+//                progressBar.visibility = View.GONE
+                AppBar.visibility = View.VISIBLE
+//                nestedScrollView.visibility = View.VISIBLE
+//                linearLayout.visibility = View.VISIBLE
             }
         }
 
 //        что то не так
         viewModel.position.observe(viewLifecycleOwner) {
-            val y = binding.RecView2.getChildAt(it).y
-            binding.nestedScrollView.fling(0)
-            binding.nestedScrollView.smoothScrollTo(0, y.toInt())
+//            val y = binding.RecView2.getChildAt(it).y
+//            binding.nestedScrollView.fling(0)
+//            binding.nestedScrollView.smoothScrollTo(0, y.toInt())
         }
 
         viewModel.error.observe(viewLifecycleOwner) {
@@ -226,12 +223,12 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
     }
 
     override fun onClick() {
-        if (BillCounter.getBill() > 0) {
-            binding.bill.visibility = View.VISIBLE
-            binding.bill.text = BillCounter.getBill().toString()
-        } else if (BillCounter.getBill() <= 0) {
-            binding.bill.visibility = View.GONE
-            binding.bill.text = null
-        }
+//        if (BillCounter.getBill() > 0) {
+//            binding.bill.visibility = View.VISIBLE
+//            binding.bill.text = BillCounter.getBill().toString()
+//        } else if (BillCounter.getBill() <= 0) {
+//            binding.bill.visibility = View.GONE
+//            binding.bill.text = null
+//        }
     }
 }
