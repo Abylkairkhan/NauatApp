@@ -10,20 +10,21 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nomad.R
 import com.example.nomad.databinding.FragmentBucketBinding
+import com.example.nomad.domain.adapters.BucketAdapter
 import com.example.nomad.domain.adapters.ProductAdapter
 import com.example.nomad.domain.models.ProductModel
 import com.example.nomad.domain.use_case.BillCounter
 import com.example.nomad.domain.use_case.LanguageController
 import com.example.nomad.domain.use_case.ProductListManager
 
-class BucketFragment : Fragment(), ProductAdapter.Listener {
+class BucketFragment : Fragment() {
 
     private lateinit var binding: FragmentBucketBinding
-    private var productAdapter: ProductAdapter? = null
+    private var productAdapter: BucketAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        productAdapter = ProductAdapter(this)
+        productAdapter = BucketAdapter()
     }
 
     override fun onCreateView(
@@ -46,7 +47,7 @@ class BucketFragment : Fragment(), ProductAdapter.Listener {
                 data.add(it)
             }
         }
-        productAdapter!!.setSortedItems(data)
+        productAdapter!!.setItems(data)
         binding.RecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.RecyclerView.adapter = productAdapter
     }
@@ -55,9 +56,5 @@ class BucketFragment : Fragment(), ProductAdapter.Listener {
         binding.backButton.setOnClickListener {
             Navigation.findNavController(requireView()).navigate(R.id.bucket_to_main)
         }
-    }
-
-    override fun onClick() {
-
     }
 }

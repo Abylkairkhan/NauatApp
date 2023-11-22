@@ -1,5 +1,6 @@
 package com.example.nomad.data.network
 
+import android.util.Log
 import com.example.nomad.additional.Result
 import com.example.nomad.data.network.models.FoodTypeNetwork
 import com.example.nomad.data.network.models.MainMenuNetwork
@@ -77,6 +78,7 @@ class NomadNetwork(
                 .orderBy("id", Query.Direction.ASCENDING)
                 .get(Source.SERVER)
                 .addOnSuccessListener { resultCollection ->
+//                    Log.d("MyLog", "Success")
                     for (product in resultCollection) {
                         val product = ProductNetwork(
                             product.get("id") as Long,
@@ -133,156 +135,27 @@ class NomadNetwork(
     }
 
     override suspend fun insertProduct() {
-        val list = listOf<ProductNetwork2>(
-            ProductNetwork2(
-                id = 351,
-                name_rus = "Домашняя сметана",
-                name_kaz = "Үйдегідей әзірленген қаймақ",
-                name_eng = "Homemade sour cream",
-                overview_rus = "",
-                overview_kaz = "",
-                overview_eng = "",
-                image = "",
-                price = 300,
-                food_type = FirebaseFirestore.getInstance()
-                    .document("FoodTypeEnglish/3fAERQgUjVHoTJB7Kn3o")
-            ),
-            ProductNetwork2(
-                id = 352,
-                name_rus = "Чесночный",
-                name_kaz = "Сарымсақ",
-                name_eng = "Garlic",
-                overview_rus = "",
-                overview_kaz = "",
-                overview_eng = "",
-                image = "",
-                price = 250,
-                food_type = FirebaseFirestore.getInstance()
-                    .document("FoodTypeEnglish/3fAERQgUjVHoTJB7Kn3o")
-            ),
-            ProductNetwork2(
-                id = 353,
-                name_rus = "Тар-тар",
-                name_kaz = "Тар-тар",
-                name_eng = "Tar-tar",
-                overview_rus = "",
-                overview_kaz = "",
-                overview_eng = "",
-                image = "",
-                price = 250,
-                food_type = FirebaseFirestore.getInstance()
-                    .document("FoodTypeEnglish/3fAERQgUjVHoTJB7Kn3o")
-            ),
-            ProductNetwork2(
-                id = 354,
-                name_rus = "BBQ",
-                name_kaz = "BBQ",
-                name_eng = "BBQ",
-                overview_rus = "",
-                overview_kaz = "",
-                overview_eng = "",
-                image = "",
-                price = 300,
-                food_type = FirebaseFirestore.getInstance()
-                    .document("FoodTypeEnglish/3fAERQgUjVHoTJB7Kn3o")
-            ),
-            ProductNetwork2(
-                id = 355,
-                name_rus = "Sweetchili",
-                name_kaz = "Sweetchili",
-                name_eng = "Sweetchili",
-                overview_rus = "",
-                overview_kaz = "",
-                overview_eng = "",
-                image = "",
-                price = 300,
-                food_type = FirebaseFirestore.getInstance()
-                    .document("FoodTypeEnglish/3fAERQgUjVHoTJB7Kn3o")
-            ),
-            ProductNetwork2(
-                id = 356,
-                name_rus = "Майонез",
-                name_kaz = "Майонез",
-                name_eng = "Mayonnaise",
-                overview_rus = "",
-                overview_kaz = "",
-                overview_eng = "",
-                image = "",
-                price = 200,
-                food_type = FirebaseFirestore.getInstance()
-                    .document("FoodTypeEnglish/3fAERQgUjVHoTJB7Kn3o")
-            ),
-            ProductNetwork2(
-                id = 357,
-                name_rus = "Кетчуп",
-                name_kaz = "Кетчуп",
-                name_eng = "Ketchup",
-                overview_rus = "",
-                overview_kaz = "",
-                overview_eng = "",
-                image = "",
-                price = 200,
-                food_type = FirebaseFirestore.getInstance()
-                    .document("FoodTypeEnglish/3fAERQgUjVHoTJB7Kn3o")
-            ),
-            ProductNetwork2(
-                id = 358,
-                name_rus = "Сырный",
-                name_kaz = "Ірімшік",
-                name_eng = "Cheese",
-                overview_rus = "",
-                overview_kaz = "",
-                overview_eng = "",
-                image = "",
-                price = 300,
-                food_type = FirebaseFirestore.getInstance()
-                    .document("FoodTypeEnglish/3fAERQgUjVHoTJB7Kn3o")
-            ),
-            ProductNetwork2(
-                id = 359,
-                name_rus = "Сацебели",
-                name_kaz = "Сацебели",
-                name_eng = "Satsebeli",
-                overview_rus = "",
-                overview_kaz = "",
-                overview_eng = "",
-                image = "",
-                price = 300,
-                food_type = FirebaseFirestore.getInstance()
-                    .document("FoodTypeEnglish/3fAERQgUjVHoTJB7Kn3o")
-            ),
-            ProductNetwork2(
-                id = 360,
-                name_rus = "Табаско",
-                name_kaz = "Табаско",
-                name_eng = "Tabasco",
-                overview_rus = "",
-                overview_kaz = "",
-                overview_eng = "",
-                image = "",
-                price = 400,
-                food_type = FirebaseFirestore.getInstance()
-                    .document("FoodTypeEnglish/3fAERQgUjVHoTJB7Kn3o")
-            )
-        )
-
-        for (data in list) {
-            Firebase.firestore.collection("ProductEnglish")
-                .add(data)
-        }
+//        val list = listOf<ProductNetwork2>(
+//
+//        )
+//
+//        for (data in list) {
+//            Firebase.firestore.collection("ProductEnglish")
+//                .add(data)
+//        }
 
     }
 }
 
-data class ProductNetwork2(
-    val id: Long,
-    val name_eng: String,
-    val name_rus: String,
-    val name_kaz: String,
-    val overview_eng: String,
-    val overview_rus: String,
-    val overview_kaz: String,
-    val price: Long,
-    val image: String,
-    val food_type: DocumentReference
-)
+//data class ProductNetwork2(
+//    val id: Long,
+//    val name_eng: String,
+//    val name_rus: String,
+//    val name_kaz: String,
+//    val overview_eng: String,
+//    val overview_rus: String,
+//    val overview_kaz: String,
+//    val price: Long,
+//    val image: String,
+//    val food_type: DocumentReference
+//)

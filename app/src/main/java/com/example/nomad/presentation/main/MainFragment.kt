@@ -1,6 +1,7 @@
 package com.example.nomad.presentation.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,6 @@ import com.example.nomad.databinding.FragmentMainBinding
 import com.example.nomad.domain.adapters.PagerItemAdapter
 import com.example.nomad.domain.adapters.ProductAdapter
 import com.example.nomad.domain.models.FoodTypeModel
-import com.example.nomad.domain.models.ProductModel
 import com.example.nomad.domain.use_case.BillCounter
 import com.example.nomad.domain.use_case.LanguageController
 import com.example.nomad.domain.use_case.ProductListManager

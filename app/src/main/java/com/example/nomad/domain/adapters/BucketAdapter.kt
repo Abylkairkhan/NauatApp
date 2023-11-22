@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.nomad.databinding.ProductItemBinding
@@ -11,29 +12,36 @@ import com.example.nomad.databinding.ProductItemWithoutImgBinding
 import com.example.nomad.domain.models.ProductModel
 import com.example.nomad.domain.use_case.BillCounter
 import com.example.nomad.domain.use_case.LanguageController
-import com.example.nomad.domain.use_case.ProductListManager
 
+class ProductModelDiffCallback(
+    private val oldList: List<ProductModel>,
+    private val newList: List<ProductModel>
+) : DiffUtil.Callback() {
 
-const val CARD_WITH_IMAGE = 0
-const val CARD_WITHOUT_IMAGE = 1
-const val CARD_DIVIDER = 2
+    override fun getOldListSize(): Int = oldList.size
+    override fun getNewListSize(): Int = newList.size
 
-class ProductAdapter(
-    val listener: Listener
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    private var productList: List<ProductModel> = mutableListOf()
-
-    fun setItems() {
-        productList = ProductListManager.getProducts()
-        notifyDataSetChanged()
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition].id == newList[newItemPosition].id
     }
 
-    fun setSortedItems(data: List<ProductModel>) {
-        productList = data
-        notifyDataSetChanged()
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
+}
 
+class BucketAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private var productList: MutableList<ProductModel> = mutableListOf()
+
+    fun setItems(newList: List<ProductModel>) {
+        val diffResult = DiffUtil.calculateDiff(
+            ProductModelDiffCallback(productList, newList)
+        )
+        productList.clear()
+        productList.addAll(newList)
+        diffResult.dispatchUpdatesTo(this)
+    }
     inner class ProductWithImage(private val binding: ProductItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -46,26 +54,26 @@ class ProductAdapter(
                 count.text = product.countInBucket.toString()
 
                 plusBtn.setOnClickListener {
-                    Log.d("MyLog", "ProductAdapter Plus")
                     BillCounter.setBill(product.price, true)
                     product.countInBucket+=1
-                    listener.onClick()
-                    notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
-                    Log.d("MyLog", "ProductAdapter Plus")
                     BillCounter.setBill(product.price, false)
                     product.countInBucket-=1
-                    listener.onClick()
-                    notifyItemChanged(position)
+                    if (product.countInBucket <= 0) {
+                        // Remove the item from the list if count is zero or negative
+                        productList.remove(product)
+                    }
+
+                    // Notify the adapter of the data change
+                    notifyDataSetChanged()
                 }
 
                 if (product.countInBucket > 0) {
                     minusBtn.visibility = View.VISIBLE
                     count.visibility = View.VISIBLE
                 } else {
-
                     minusBtn.visibility = View.GONE
                     count.visibility = View.GONE
                 }
@@ -84,19 +92,20 @@ class ProductAdapter(
                 count.text = product.countInBucket.toString()
 
                 plusBtn.setOnClickListener {
-                    Log.d("MyLog", "ProductAdapter Plus")
                     BillCounter.setBill(product.price, true)
                     product.countInBucket+=1
-                    listener.onClick()
-                    notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
-                    Log.d("MyLog", "ProductAdapter Plus")
                     BillCounter.setBill(product.price, false)
                     product.countInBucket-=1
-                    listener.onClick()
-                    notifyItemChanged(position)
+                    if (product.countInBucket <= 0) {
+                        // Remove the item from the list if count is zero or negative
+                        productList.remove(product)
+                    }
+
+                    // Notify the adapter of the data change
+                    notifyDataSetChanged()
                 }
 
                 if (product.countInBucket > 0) {
@@ -143,9 +152,5 @@ class ProductAdapter(
 
     override fun getItemCount(): Int {
         return productList.size
-    }
-
-    interface Listener {
-        fun onClick()
     }
 }
