@@ -12,6 +12,7 @@ import com.example.nomad.databinding.ProductItemWithoutImgBinding
 import com.example.nomad.domain.models.ProductModel
 import com.example.nomad.domain.use_case.BillCounter
 import com.example.nomad.domain.use_case.LanguageController
+import com.example.nomad.domain.use_case.ProductListManager
 
 class ProductModelDiffCallback(
     private val oldList: List<ProductModel>,
@@ -54,13 +55,13 @@ class BucketAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 count.text = product.countInBucket.toString()
 
                 plusBtn.setOnClickListener {
-                    BillCounter.setBill(product.price, true)
                     product.countInBucket+=1
+                    ProductListManager.addToCart(product)
                 }
 
                 minusBtn.setOnClickListener {
-                    BillCounter.setBill(product.price, false)
                     product.countInBucket-=1
+                    ProductListManager.removeFromCart(product)
                     if (product.countInBucket <= 0) {
                         // Remove the item from the list if count is zero or negative
                         productList.remove(product)
@@ -92,13 +93,13 @@ class BucketAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 count.text = product.countInBucket.toString()
 
                 plusBtn.setOnClickListener {
-                    BillCounter.setBill(product.price, true)
                     product.countInBucket+=1
+                    ProductListManager.addToCart(product)
                 }
 
                 minusBtn.setOnClickListener {
-                    BillCounter.setBill(product.price, false)
                     product.countInBucket-=1
+                    ProductListManager.removeFromCart(product)
                     if (product.countInBucket <= 0) {
                         // Remove the item from the list if count is zero or negative
                         productList.remove(product)

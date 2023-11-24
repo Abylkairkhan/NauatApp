@@ -42,14 +42,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="7dp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/ClearButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         tools:listitem="@layout/product_item" />
 
     <TextView
-        android:id="@+id/button"
+        android:id="@+id/ClearButton"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginHorizontal="5dp"

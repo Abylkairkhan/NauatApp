@@ -43,6 +43,13 @@ class NomadDataBase(
         db.foodTypeDao().insertFoodTypeItem(data)
     }
 
+    suspend fun getProductByType(productID: String): Result {
+        val result = db.productDao().getProductByType(productID)
+        return if (result.isEmpty()) {
+            return Result.Failure("Local DataBase is Empty")
+        } else Result.Success(result)
+    }
+
     suspend fun getAllProducts(): Result {
         val result = db.productDao().getAllProduct()
         return if (result.isEmpty()) {

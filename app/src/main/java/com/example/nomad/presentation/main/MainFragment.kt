@@ -33,9 +33,9 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        pagerItemAdapter = PagerItemAdapter(requireContext(), this)
+        productAdapter = ProductAdapter(this)
         viewModel.fetchMainMenu(requireContext())
-        viewModel.fetchFoodType()
-        viewModel.fetchProduct(requireContext())
     }
 
     override fun onCreateView(
@@ -45,17 +45,21 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
         binding = FragmentMainBinding.inflate(inflater, container, false)
 
         navigationToBucket()
+        navigationToSearch()
+        showOrHideBill()
+        languageController()
 
         observers()
-        languageController()
-        search()
-        showHideBill()
+
 
 
         with(binding) {
             mainMenu.setOnClickListener { scrollBarListener(mainMenu, TopScrollView.MAIN) }
             barMenu.setOnClickListener { scrollBarListener(barMenu, TopScrollView.BAR) }
             dessertMenu.setOnClickListener { scrollBarListener(dessertMenu, TopScrollView.DESSERT) }
+
+            ProgressBar.visibility = View.VISIBLE
+            RecView2.visibility = View.GONE
         }
 
         return binding.root
@@ -67,51 +71,43 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
         }
     }
 
-//    переписать нужно
-    private fun showHideBill() {
-//        if (BillCounter.getBill() > 0) {
-//            binding.bill.visibility = View.VISIBLE
-//            binding.bill.text = BillCounter.getBill().toString()
-//        } else if (BillCounter.getBill() <= 0) {
-//            binding.bill.visibility = View.GONE
-//            binding.bill.text = null
-//        }
-    }
-
-    private fun search() {
+    private fun navigationToSearch() {
         binding.searchView.setOnClickListener {
             Navigation.findNavController(requireView()).navigate(R.id.main_to_search)
         }
     }
 
-    private fun languageController() {
+    private fun showOrHideBill() {
+        with(binding) {
+            if (ProductListManager.getBill() > 0) {
+                Bill.visibility = View.VISIBLE
+                Bill.text = ProductListManager.getBill().toString()
+            } else
+                Bill.visibility = View.GONE
+        }
+    }
 
-//        binding.language.text = getString(LanguageController.getAbbreviation())
-//        binding.searchView.text = getString(LanguageController.getSearch())
-//
-//        binding.language.setOnClickListener {
-//            LanguageController.setLanguage()
-//
-//            binding.language.text = getString(LanguageController.getAbbreviation())
-//            binding.searchView.text = getString(LanguageController.getSearch())
-//
-//            viewModel.mainMenuList.value?.let { list ->
-//                with(binding) {
-//                    textView1.text = LanguageController.getMainMenuLanguage(list[0])
-//                    textView2.text = LanguageController.getMainMenuLanguage(list[1])
-//                    textView3.text = LanguageController.getMainMenuLanguage(list[2])
-//                }
-//            }
-//
-//            viewModel.foodTypeList.observe(viewLifecycleOwner) {
-//                pagerItemAdapter!!.setItems(it)
-//            }
-//
-//            viewModel.productList.observe(viewLifecycleOwner) { list ->
-//                ProductListManager.setProducts(list)
-//                productAdapter!!.setItems()
-//            }
-//        }
+    private fun languageController() {
+        binding.language.text = getString(LanguageController.getAbbreviation())
+        binding.searchView.text = getString(LanguageController.getSearch())
+
+        binding.language.setOnClickListener {
+            LanguageController.setLanguage()
+            binding.language.text = getString(LanguageController.getAbbreviation())
+            binding.searchView.text = getString(LanguageController.getSearch())
+
+            viewModel.mainMenuList.value?.let { list ->
+                with(binding) {
+                    textView1.text = LanguageController.getMainMenuLanguage(list[0])
+                    textView2.text = LanguageController.getMainMenuLanguage(list[1])
+                    textView3.text = LanguageController.getMainMenuLanguage(list[2])
+                }
+            }
+
+            pagerItemAdapter!!.setItems(viewModel.foodTypeList.value!!)
+            productAdapter!!.updateItems()
+
+        }
     }
 
     private fun observers() {
@@ -128,28 +124,24 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
             }
         }
 
-        viewModel.foodTypeList.observe(viewLifecycleOwner) {
-//            viewModel.fetchProduct(it[0].documentId)
-            pagerItemAdapter = PagerItemAdapter(requireContext(), this)
-            pagerItemAdapter!!.setItems(it)
+        viewModel.foodTypeList.observe(viewLifecycleOwner) { list ->
+            viewModel.fetchProductByID(list[0].documentId, requireContext())
+            pagerItemAdapter!!.selectItem(0)
+            pagerItemAdapter!!.setItems(list)
             binding.RecView1.adapter = pagerItemAdapter
             binding.RecView1.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         }
 
         viewModel.productList.observe(viewLifecycleOwner) { list ->
-            productAdapter = ProductAdapter(this)
-            if (ProductListManager.getProducts().isEmpty()) ProductListManager.setProducts(list)
-            productAdapter!!.setItems()
+            productAdapter!!.setItems(list)
             binding.RecView2.adapter = productAdapter
             binding.RecView2.layoutManager =
                 LinearLayoutManager(requireContext())
 
             with(binding) {
-//                progressBar.visibility = View.GONE
-                AppBar.visibility = View.VISIBLE
-//                nestedScrollView.visibility = View.VISIBLE
-//                linearLayout.visibility = View.VISIBLE
+                ProgressBar.visibility = View.GONE
+                RecView2.visibility = View.VISIBLE
             }
         }
 
@@ -215,7 +207,11 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
     }
 
     override fun onClick(foodType: FoodTypeModel) {
-        viewModel.scrollToPosition(foodType.documentId)
+        viewModel.fetchProductByID(foodType.documentId, requireContext())
+        with(binding) {
+            ProgressBar.visibility = View.VISIBLE
+            RecView2.visibility = View.GONE
+        }
     }
 
     override fun onItemPosition(position: Int) {
@@ -223,12 +219,13 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
     }
 
     override fun onClick() {
-//        if (BillCounter.getBill() > 0) {
-//            binding.bill.visibility = View.VISIBLE
-//            binding.bill.text = BillCounter.getBill().toString()
-//        } else if (BillCounter.getBill() <= 0) {
-//            binding.bill.visibility = View.GONE
-//            binding.bill.text = null
-//        }
+        with(binding) {
+            if (ProductListManager.getBill() > 0) {
+                Bill.visibility = View.VISIBLE
+                Bill.text = ProductListManager.getBill().toString()
+            } else {
+                Bill.visibility = View.GONE
+            }
+        }
     }
 }

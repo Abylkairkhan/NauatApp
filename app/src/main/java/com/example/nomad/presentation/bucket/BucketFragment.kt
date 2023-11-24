@@ -20,11 +20,10 @@ import com.example.nomad.domain.use_case.ProductListManager
 class BucketFragment : Fragment() {
 
     private lateinit var binding: FragmentBucketBinding
-    private var productAdapter: BucketAdapter? = null
+    private var productAdapter: BucketAdapter = BucketAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        productAdapter = BucketAdapter()
     }
 
     override fun onCreateView(
@@ -33,21 +32,23 @@ class BucketFragment : Fragment() {
     ): View {
         binding = FragmentBucketBinding.inflate(inflater, container, false)
         binding.orderText.text = getString(LanguageController.getOrder())
-        binding.button.text = getString(LanguageController.getClear())
+        binding.ClearButton.text = getString(LanguageController.getClear())
         backButton()
+        clearButtonClick()
         initRecView()
 
         return binding.root
     }
 
-    private fun initRecView() {
-        val data = mutableListOf<ProductModel>()
-        ProductListManager.getProducts().forEach {
-            if (it.countInBucket > 0) {
-                data.add(it)
-            }
+    private fun clearButtonClick() {
+        binding.ClearButton.setOnClickListener {
+            ProductListManager.clearCart()
+            productAdapter.setItems(ProductListManager.getCartItems())
         }
-        productAdapter!!.setItems(data)
+    }
+
+    private fun initRecView() {
+        productAdapter.setItems(ProductListManager.getCartItems())
         binding.RecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.RecyclerView.adapter = productAdapter
     }

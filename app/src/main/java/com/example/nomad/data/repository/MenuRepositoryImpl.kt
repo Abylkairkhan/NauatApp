@@ -1,6 +1,7 @@
 package com.example.nomad.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.example.nomad.additional.Result
 import com.example.nomad.data.local.NomadDataBase
 import com.example.nomad.data.local.entity.FoodTypeEntity
@@ -26,6 +27,7 @@ class MenuRepositoryImpl(
 
         when (val localData = nomadDataBase.getMainMenuEng()) {
             is Result.Success<*> -> {
+                Log.d("MyLog", "fetchMainMenu success ")
                 val result = mutableListOf<MainMenuModel>()
                 val entityData =
                     localData.data as MutableList<MainMenuEntity>
@@ -44,7 +46,7 @@ class MenuRepositoryImpl(
                         for (item in networkListData) {
                             val tempModel = MainMenuConverter.networkToModel(item, context)
                             result.add(tempModel)
-                            nomadDataBase.insertMainMenu(MainMenuConverter.modelToEntity(tempModel))
+//                            nomadDataBase.insertMainMenu(MainMenuConverter.modelToEntity(tempModel))
                         }
                         return Result.Success(result)
                     }
@@ -57,6 +59,89 @@ class MenuRepositoryImpl(
         }
     }
 
+    override suspend fun fetchFoodTypeByType(type: String): Result {
+        val result = mutableListOf<FoodTypeModel>()
+        when (val localData = nomadDataBase.getFoodTypeByType(type)) {
+            is Result.Success<*> -> {
+                Log.d("MyLog", "fetchFoodType success ")
+                val entityData =
+                    localData.data as MutableList<FoodTypeEntity>
+                for (item in entityData) {
+                    result.add(FoodTypeConverter.entityToModel(item))
+                }
+                return Result.Success(result)
+            }
+
+            is Result.Failure<*> -> {
+                return when (val networkData = nomadNetwork.getFoodTypeByType(type)) {
+                    is Result.Success<*> -> {
+                        val networkListData =
+                            networkData.data as MutableList<FoodTypeNetwork>
+                        for (item in networkListData) {
+                            val tempModel = FoodTypeConverter.networkToModel(item)
+                            result.add(tempModel)
+//                            nomadDataBase.insertFoodType(FoodTypeConverter.modelToEntity(tempModel))
+                        }
+                        Result.Success(result)
+                    }
+
+                    is Result.Failure<*> -> {
+                        Result.Failure(networkData.error as String)
+                    }
+                }
+            }
+        }
+    }
+
+    override suspend fun fetchProductByType(type: String, context: Context): Result {
+        val result = mutableListOf<ProductModel>()
+        when (val localData = nomadDataBase.getProductByType(type)) {
+            is Result.Success<*> -> {
+                Log.d("MyLog", "fetchProduct success ")
+                val entityData =
+                    localData.data as MutableList<ProductEntity>
+                for (item in entityData) {
+                    result.add(ProductConverter.entityToModel(item))
+                }
+                return Result.Success(result)
+            }
+
+            is Result.Failure<*> -> {
+                when (val networkData = nomadNetwork.getProductByType(type)) {
+                    is Result.Success<*> -> {
+                        val networkListData =
+                            networkData.data as MutableList<ProductNetwork>
+                        for (item in networkListData) {
+                            val tempModel = ProductConverter.networkToModel(item, context)
+                            result.add(tempModel)
+//                            nomadDataBase.insertProduct(ProductConverter.modelToEntity(tempModel))
+                        }
+                        return Result.Success(result)
+                    }
+
+                    is Result.Failure<*> -> {
+                        return Result.Failure(networkData.error as String)
+                    }
+                }
+            }
+        }
+    }
+
+    override suspend fun insertMainMenuDataBase(mainMenuEntity: MainMenuEntity) {
+        nomadDataBase.insertMainMenu(mainMenuEntity)
+    }
+
+    override suspend fun insertFoodTypeDataBase(foodTypeEntity: FoodTypeEntity) {
+        nomadDataBase.insertFoodType(foodTypeEntity)
+    }
+
+    override suspend fun insertProductDataBase(productEntity: ProductEntity) {
+        nomadDataBase.insertProduct(productEntity)
+    }
+
+
+
+    //    Отсуда начинается прошлая версия приложения
     override suspend fun fetchFoodType(): Result {
 
         when (val localData = nomadDataBase.getFoodType()) {
@@ -79,7 +164,7 @@ class MenuRepositoryImpl(
                         for (item in networkListData) {
                             val tempModel = FoodTypeConverter.networkToModel(item)
                             result.add(tempModel)
-                            nomadDataBase.insertFoodType(FoodTypeConverter.modelToEntity(tempModel))
+//                            nomadDataBase.insertFoodType(FoodTypeConverter.modelToEntity(tempModel))
                         }
                         return Result.Success(result)
                     }
@@ -93,11 +178,9 @@ class MenuRepositoryImpl(
     }
 
     override suspend fun fetchProduct(context: Context): Result {
-
-
+        val result = mutableListOf<ProductModel>()
         when (val localData = nomadDataBase.getAllProducts()) {
             is Result.Success<*> -> {
-                val result = mutableListOf<ProductModel>()
                 val entityData =
                     localData.data as MutableList<ProductEntity>
                 for (item in entityData) {
@@ -109,7 +192,6 @@ class MenuRepositoryImpl(
             is Result.Failure<*> -> {
                 when (val networkData = nomadNetwork.getAllProducts()) {
                     is Result.Success<*> -> {
-                        val result = mutableListOf<ProductModel>()
                         val networkListData =
                             networkData.data as MutableList<ProductNetwork>
                         for (item in networkListData) {
@@ -127,25 +209,6 @@ class MenuRepositoryImpl(
             }
         }
     }
-
-    override suspend fun fetchFoodTypeByType(type: String): MutableList<FoodTypeModel> {
-        val result = mutableListOf<FoodTypeModel>()
-
-        when (val localData = nomadDataBase.getFoodTypeByType(type)) {
-            is Result.Success<*> -> {
-                val entityData =
-                    localData.data as MutableList<FoodTypeEntity>
-                for (item in entityData) {
-                    result.add(FoodTypeConverter.entityToModel(item))
-                }
-            }
-
-            is Result.Failure<*> -> TODO()
-        }
-
-        return result
-    }
-
 
     override suspend fun getFoodTypePosition(documentID: String): Int {
         return nomadDataBase.getFoodTypePosition(documentID)
@@ -174,6 +237,4 @@ class MenuRepositoryImpl(
     override suspend fun insert() {
         nomadNetwork.insertProduct()
     }
-
-
 }

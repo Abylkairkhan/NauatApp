@@ -17,15 +17,19 @@ import com.example.nomad.domain.models.ProductModel
 import com.example.nomad.domain.use_case.BillCounter
 import com.example.nomad.domain.use_case.LanguageController
 import com.example.nomad.domain.use_case.ProductListManager
+import com.example.nomad.presentation.main.MainViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class SearchFragment : Fragment(), ProductAdapter.Listener {
 
     private lateinit var binding: FragmentSearchBinding
-    private var productAdapter: ProductAdapter? = null
+    private val viewModel by viewModel<MainViewModel>()
+    private var productAdapter: ProductAdapter = ProductAdapter(this@SearchFragment)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.fetchProduct(requireContext())
     }
 
     override fun onCreateView(
@@ -58,29 +62,24 @@ class SearchFragment : Fragment(), ProductAdapter.Listener {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (!newText.isNullOrEmpty()) {
-                    val sortedList = ProductListManager.getProducts().filter { product ->
-                        when(LanguageController.getLanguage()){
-                            LanguageController.Language.RUS -> product.nameRus.contains(newText, true)
-                            LanguageController.Language.KAZ -> product.nameKaz.contains(newText, true)
-                            LanguageController.Language.ENG -> product.nameEng.contains(newText, true)
-                        }
-                    }
-                    productAdapter!!.setSortedItems(sortedList)
+                    viewModel.fetchProductByPattern(newText)
                 } else {
-                    productAdapter!!.setItems()
+                    viewModel.fetchProduct(requireContext())
                 }
+
                 return true
             }
         })
     }
 
     private fun observeProductList() {
-        with(binding) {
-            productAdapter = ProductAdapter(this@SearchFragment)
-            productAdapter!!.setItems()
-            RecyclerView.adapter = productAdapter
-            RecyclerView.layoutManager =
-                LinearLayoutManager(requireContext())
+        viewModel.productList.observe(viewLifecycleOwner){
+            with(binding) {
+                productAdapter.setItems(viewModel.productList.value!!)
+                RecyclerView.adapter = productAdapter
+                RecyclerView.layoutManager =
+                    LinearLayoutManager(requireContext())
+            }
         }
     }
 

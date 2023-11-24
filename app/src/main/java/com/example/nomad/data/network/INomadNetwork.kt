@@ -6,12 +6,14 @@ interface INomadNetwork {
 
     suspend fun getMainMenu() : Result
 
+    suspend fun getFoodTypeByType(documentID: String): Result
+
     suspend fun getFoodType(): Result
 
-    //    Думаю нужно удалить
-    suspend fun getProductByType(id: String): Result
-    suspend fun insertProduct()
+    suspend fun getProductByType(foodTypeID: String): Result
 
     suspend fun getAllProducts(): Result
+
+    suspend fun insertProduct()
 
 }

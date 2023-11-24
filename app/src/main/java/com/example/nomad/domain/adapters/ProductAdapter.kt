@@ -24,12 +24,11 @@ class ProductAdapter(
 
     private var productList: List<ProductModel> = mutableListOf()
 
-    fun setItems() {
-        productList = ProductListManager.getProducts()
+    fun updateItems() {
         notifyDataSetChanged()
     }
 
-    fun setSortedItems(data: List<ProductModel>) {
+    fun setItems(data: List<ProductModel>) {
         productList = data
         notifyDataSetChanged()
     }
@@ -46,17 +45,15 @@ class ProductAdapter(
                 count.text = product.countInBucket.toString()
 
                 plusBtn.setOnClickListener {
-                    Log.d("MyLog", "ProductAdapter Plus")
-                    BillCounter.setBill(product.price, true)
-                    product.countInBucket+=1
+                    product.countInBucket +=1
+                    ProductListManager.addToCart(product)
                     listener.onClick()
                     notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
-                    Log.d("MyLog", "ProductAdapter Plus")
-                    BillCounter.setBill(product.price, false)
-                    product.countInBucket-=1
+                    product.countInBucket -=1
+                    ProductListManager.removeFromCart(product)
                     listener.onClick()
                     notifyItemChanged(position)
                 }
@@ -65,7 +62,6 @@ class ProductAdapter(
                     minusBtn.visibility = View.VISIBLE
                     count.visibility = View.VISIBLE
                 } else {
-
                     minusBtn.visibility = View.GONE
                     count.visibility = View.GONE
                 }
@@ -84,17 +80,15 @@ class ProductAdapter(
                 count.text = product.countInBucket.toString()
 
                 plusBtn.setOnClickListener {
-                    Log.d("MyLog", "ProductAdapter Plus")
-                    BillCounter.setBill(product.price, true)
-                    product.countInBucket+=1
+                    product.countInBucket +=1
+                    ProductListManager.addToCart(product)
                     listener.onClick()
                     notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
-                    Log.d("MyLog", "ProductAdapter Plus")
-                    BillCounter.setBill(product.price, false)
-                    product.countInBucket-=1
+                    product.countInBucket -=1
+                    ProductListManager.removeFromCart(product)
                     listener.onClick()
                     notifyItemChanged(position)
                 }
