@@ -10,4 +10,4 @@ The functionality of product search and order basket has been introduced.
 - DI (Koin)
 - Coordinator Layout
 
-![Uploading Google Pixel 3 Presentation.png…]()
+![Uploading Google Pixel 3 Presentation.png…](https://github.com/Abylkairkhan/NauatApp/blob/main/Google%20Pixel%203%20Presentation.png)
