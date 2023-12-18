@@ -2,7 +2,7 @@ package com.example.nomad.data.network.models
 
 import com.google.firebase.firestore.DocumentReference
 
-data class ProductNetwork (
+data class ProductNetwork(
     var id: Long,
     var nameEng: String,
     var nameRus: String,

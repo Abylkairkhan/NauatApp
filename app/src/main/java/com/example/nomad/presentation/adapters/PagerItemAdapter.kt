@@ -1,4 +1,4 @@
-package com.example.nomad.domain.adapters
+package com.example.nomad.presentation.adapters
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nomad.R
 import com.example.nomad.databinding.PagerItemBinding
@@ -19,11 +20,31 @@ class PagerItemAdapter(
     private val listener: Listener,
 ) : RecyclerView.Adapter<PagerItemAdapter.PagerItemHolder>() {
 
-    private var list: List<FoodTypeModel> = listOf()
+    class PagerItemDiffUtil(
+        private val oldList: List<FoodTypeModel>,
+        private val newList: List<FoodTypeModel>,
+        private val languageChanged: Boolean
+    ) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int = oldList.size
 
-    fun setItems(_list: List<FoodTypeModel>) {
-        list = _list
-        notifyDataSetChanged()
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            oldList[oldItemPosition].id == newList[newItemPosition].id
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            if (languageChanged) false
+            else oldList[oldItemPosition] == newList[newItemPosition]
+
+    }
+
+    private var foodTypeList: List<FoodTypeModel> = listOf()
+
+    fun setData(newFoodTypeList: List<FoodTypeModel>, languageChanged: Boolean = false) {
+        val diffUtil = PagerItemDiffUtil(foodTypeList, newFoodTypeList, languageChanged)
+        val diffResult = DiffUtil.calculateDiff(diffUtil)
+        foodTypeList = newFoodTypeList
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun selectItem(position: Int) {
@@ -52,14 +73,14 @@ class PagerItemAdapter(
     override fun onBindViewHolder(holder: PagerItemHolder, position: Int) {
         if (selectedPosition == position) {
             holder.bind(
-                list[position],
+                foodTypeList[position],
                 AppCompatResources.getDrawable(context, R.drawable.selected_item_bg)!!,
                 position,
                 listener
             )
         } else {
             holder.bind(
-                list[position],
+                foodTypeList[position],
                 AppCompatResources.getDrawable(context, R.drawable.unselected_item_bg)!!,
                 position,
                 listener
@@ -74,7 +95,7 @@ class PagerItemAdapter(
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        return foodTypeList.size
     }
 
     interface Listener {

@@ -5,6 +5,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 
 const val COLLECTION = "/ProductEnglish"
+
 object DocumentReferenceConverter {
 
     @TypeConverter

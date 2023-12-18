@@ -5,6 +5,12 @@ import com.example.nomad.data.network.INomadNetwork
 import com.example.nomad.data.network.NomadNetwork
 import com.example.nomad.data.repository.IMenuRepository
 import com.example.nomad.data.repository.MenuRepositoryImpl
+import com.example.nomad.domain.usecase.GetFoodTypeByType
+import com.example.nomad.domain.usecase.GetMainMenuData
+import com.example.nomad.domain.usecase.GetProductByPattern
+import com.example.nomad.domain.usecase.GetProductByType
+import com.example.nomad.domain.usecase.GetProducts
+import com.example.nomad.domain.usecase.InsertLocalData
 import com.example.nomad.presentation.main.MainViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -20,6 +26,18 @@ val mainModule = module {
 
     single<INomadNetwork> { NomadNetwork() }
 
-    viewModel { MainViewModel(get()) }
+    single { GetFoodTypeByType(get()) }
+
+    single { GetMainMenuData(get()) }
+
+    single { GetProductByPattern(get()) }
+
+    single { GetProductByType(get()) }
+
+    single { GetProducts(get()) }
+
+    single { InsertLocalData(get()) }
+
+    viewModel { MainViewModel(get(), get(), get(), get(), get(), get()) }
 
 }

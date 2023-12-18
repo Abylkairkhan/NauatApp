@@ -19,9 +19,12 @@ object ImageConverter {
             .build()
 
 //        val result = (loading.execute(request) as SuccessResult).drawable
-        return when(val result = loading.execute(request)){
-            is SuccessResult -> (result as BitmapDrawable).bitmap
+//        return (result as BitmapDrawable).bitmap
+
+        return when (val result = loading.execute(request)) {
+            is SuccessResult -> (result.drawable as BitmapDrawable).bitmap
             is ErrorResult -> null
         }
+
     }
 }

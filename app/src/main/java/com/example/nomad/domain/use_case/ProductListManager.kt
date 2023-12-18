@@ -1,6 +1,5 @@
 package com.example.nomad.domain.use_case
 
-import android.util.Log
 import com.example.nomad.domain.models.ProductModel
 
 object ProductListManager {
@@ -26,22 +25,20 @@ object ProductListManager {
         val existingItem = cartItems.find { it.id == product.id }
 
         if (existingItem != null) {
-            if (existingItem.countInBucket > 1) {
+            if (existingItem.countInBucket > 0) {
                 existingItem.countInBucket--
-            } else {
-                cartItems.remove(existingItem)
+                if (existingItem.countInBucket == 0) {
+                    cartItems.remove(existingItem)
+                }
             }
         }
     }
 
     fun getBill(): Long {
         var totalBill = 0L
-        Log.d("MyLog", "Cart Items: ")
         for (item in cartItems) {
-            Log.d("MyLog", "${item.nameRus}: price(${item.price}) itemCount (${item.countInBucket})")
             totalBill += item.price * item.countInBucket
         }
-
         return totalBill
     }
 

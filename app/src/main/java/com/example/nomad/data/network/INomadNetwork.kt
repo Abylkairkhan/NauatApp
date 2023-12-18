@@ -4,7 +4,7 @@ import com.example.nomad.additional.Result
 
 interface INomadNetwork {
 
-    suspend fun getMainMenu() : Result
+    suspend fun getMainMenu(): Result
 
     suspend fun getFoodTypeByType(documentID: String): Result
 

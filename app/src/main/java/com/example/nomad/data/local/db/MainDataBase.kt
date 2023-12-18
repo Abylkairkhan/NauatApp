@@ -14,7 +14,11 @@ import com.example.nomad.data.local.entity.ProductEntity
 import com.example.nomad.data.use_case.BitmapConverter
 import com.example.nomad.data.use_case.DocumentReferenceConverter
 
-@Database(entities = [MainMenuEntity::class, FoodTypeEntity::class, ProductEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [MainMenuEntity::class, FoodTypeEntity::class, ProductEntity::class],
+    version = 1,
+    exportSchema = false
+)
 @TypeConverters(DocumentReferenceConverter::class, BitmapConverter::class)
 abstract class MainDataBase : RoomDatabase() {
 

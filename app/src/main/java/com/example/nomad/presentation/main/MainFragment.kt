@@ -1,7 +1,6 @@
 package com.example.nomad.presentation.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +13,11 @@ import coil.load
 import com.example.nomad.R
 import com.example.nomad.additional.TopScrollView
 import com.example.nomad.databinding.FragmentMainBinding
-import com.example.nomad.domain.adapters.PagerItemAdapter
-import com.example.nomad.domain.adapters.ProductAdapter
 import com.example.nomad.domain.models.FoodTypeModel
-import com.example.nomad.domain.use_case.BillCounter
 import com.example.nomad.domain.use_case.LanguageController
 import com.example.nomad.domain.use_case.ProductListManager
+import com.example.nomad.presentation.adapters.PagerItemAdapter
+import com.example.nomad.presentation.adapters.ProductAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Listener {
@@ -48,7 +46,6 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
         navigationToSearch()
         showOrHideBill()
         languageController()
-
         observers()
 
 
@@ -88,25 +85,25 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
     }
 
     private fun languageController() {
-        binding.language.text = getString(LanguageController.getAbbreviation())
-        binding.searchView.text = getString(LanguageController.getSearch())
+        with(binding) {
+            language.text = getString(LanguageController.getAbbreviation())
+            searchView.text = getString(LanguageController.getSearch())
 
-        binding.language.setOnClickListener {
-            LanguageController.setLanguage()
-            binding.language.text = getString(LanguageController.getAbbreviation())
-            binding.searchView.text = getString(LanguageController.getSearch())
+            language.setOnClickListener {
+                LanguageController.setLanguage()
+                language.text = getString(LanguageController.getAbbreviation())
+                searchView.text = getString(LanguageController.getSearch())
 
-            viewModel.mainMenuList.value?.let { list ->
-                with(binding) {
+                viewModel.mainMenuList.value?.let { list ->
                     textView1.text = LanguageController.getMainMenuLanguage(list[0])
                     textView2.text = LanguageController.getMainMenuLanguage(list[1])
                     textView3.text = LanguageController.getMainMenuLanguage(list[2])
                 }
+
+                pagerItemAdapter!!.setData(viewModel.foodTypeList.value!!, true)
+                productAdapter!!.setData(viewModel.productList.value!!, true)
+
             }
-
-            pagerItemAdapter!!.setItems(viewModel.foodTypeList.value!!)
-            productAdapter!!.updateItems()
-
         }
     }
 
@@ -124,17 +121,17 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
             }
         }
 
-        viewModel.foodTypeList.observe(viewLifecycleOwner) { list ->
-            viewModel.fetchProductByID(list[0].documentId, requireContext())
+        viewModel.foodTypeList.observe(viewLifecycleOwner) { foodTypeList ->
+            viewModel.fetchProductByID(foodTypeList[0].documentId, requireContext())
             pagerItemAdapter!!.selectItem(0)
-            pagerItemAdapter!!.setItems(list)
+            pagerItemAdapter!!.setData(foodTypeList)
             binding.RecView1.adapter = pagerItemAdapter
             binding.RecView1.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         }
 
         viewModel.productList.observe(viewLifecycleOwner) { list ->
-            productAdapter!!.setItems(list)
+            productAdapter!!.setData(list)
             binding.RecView2.adapter = productAdapter
             binding.RecView2.layoutManager =
                 LinearLayoutManager(requireContext())
@@ -143,13 +140,6 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
                 ProgressBar.visibility = View.GONE
                 RecView2.visibility = View.VISIBLE
             }
-        }
-
-//        что то не так
-        viewModel.position.observe(viewLifecycleOwner) {
-//            val y = binding.RecView2.getChildAt(it).y
-//            binding.nestedScrollView.fling(0)
-//            binding.nestedScrollView.smoothScrollTo(0, y.toInt())
         }
 
         viewModel.error.observe(viewLifecycleOwner) {
@@ -174,8 +164,6 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
                     binding.dessertMenu.background =
                         ResourcesCompat.getDrawable(resources, R.drawable.unselected_item_bg, null)
                 }
-
-                else -> {}
             }
 
             when (tab) {
@@ -199,8 +187,6 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
                     viewModel.mainMenuList.value?.get(2)
                         ?.let { it1 -> viewModel.fetchFoodTypeByID(it1.documentId) }
                 }
-
-                else -> {}
             }
             currentTab = tab
         }

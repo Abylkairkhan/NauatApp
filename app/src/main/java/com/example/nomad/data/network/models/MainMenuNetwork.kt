@@ -1,6 +1,6 @@
 package com.example.nomad.data.network.models
 
-data class MainMenuNetwork (
+data class MainMenuNetwork(
     val id: Long,
     val documentId: String,
     val nameEng: String,

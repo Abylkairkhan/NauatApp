@@ -8,16 +8,16 @@ import java.io.ByteArrayOutputStream
 class BitmapConverter {
 
     @TypeConverter
-    fun fromBitmap(bitmap: Bitmap?): ByteArray {
-        if (bitmap == null) return ByteArray(1)
+    fun fromBitmap(bitmap: Bitmap?): ByteArray? {
+        if (bitmap == null) return null
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         return outputStream.toByteArray()
     }
 
     @TypeConverter
-    fun fromByteArray(byteArray: ByteArray): Bitmap? {
-        if (byteArray.contentEquals(ByteArray(1))) return null
+    fun fromByteArray(byteArray: ByteArray?): Bitmap? {
+        if (byteArray == null) return null
         return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
     }
 }

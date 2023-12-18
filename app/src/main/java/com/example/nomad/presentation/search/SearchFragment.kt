@@ -12,11 +12,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nomad.R
 import com.example.nomad.databinding.FragmentSearchBinding
-import com.example.nomad.domain.adapters.ProductAdapter
-import com.example.nomad.domain.models.ProductModel
-import com.example.nomad.domain.use_case.BillCounter
+import com.example.nomad.presentation.adapters.ProductAdapter
 import com.example.nomad.domain.use_case.LanguageController
-import com.example.nomad.domain.use_case.ProductListManager
 import com.example.nomad.presentation.main.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -73,9 +70,9 @@ class SearchFragment : Fragment(), ProductAdapter.Listener {
     }
 
     private fun observeProductList() {
-        viewModel.productList.observe(viewLifecycleOwner){
+        viewModel.productList.observe(viewLifecycleOwner) {
             with(binding) {
-                productAdapter.setItems(viewModel.productList.value!!)
+                productAdapter.setData(viewModel.productList.value!!)
                 RecyclerView.adapter = productAdapter
                 RecyclerView.layoutManager =
                     LinearLayoutManager(requireContext())

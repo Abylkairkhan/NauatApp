@@ -1,6 +1,5 @@
-package com.example.nomad.domain.adapters
+package com.example.nomad.presentation.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,39 +9,39 @@ import coil.load
 import com.example.nomad.databinding.ProductItemBinding
 import com.example.nomad.databinding.ProductItemWithoutImgBinding
 import com.example.nomad.domain.models.ProductModel
-import com.example.nomad.domain.use_case.BillCounter
 import com.example.nomad.domain.use_case.LanguageController
 import com.example.nomad.domain.use_case.ProductListManager
 
-class ProductModelDiffCallback(
-    private val oldList: List<ProductModel>,
-    private val newList: List<ProductModel>
-) : DiffUtil.Callback() {
+class BucketAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun getOldListSize(): Int = oldList.size
-    override fun getNewListSize(): Int = newList.size
+    class BucketDiffUtil(
+        private val oldList: List<ProductModel>,
+        private val newList: List<ProductModel>,
+        private val languageChanged: Boolean
+    ) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int = oldList.size
 
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition].id == newList[newItemPosition].id
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            oldList[oldItemPosition].id == newList[newItemPosition].id
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            if (languageChanged) false
+            else oldList[oldItemPosition] == newList[newItemPosition]
+
     }
 
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition] == newList[newItemPosition]
-    }
-}
+    private var bucketProductList: MutableList<ProductModel> = mutableListOf()
 
-class BucketAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    private var productList: MutableList<ProductModel> = mutableListOf()
-
-    fun setItems(newList: List<ProductModel>) {
-        val diffResult = DiffUtil.calculateDiff(
-            ProductModelDiffCallback(productList, newList)
-        )
-        productList.clear()
-        productList.addAll(newList)
+    fun setData(newBucketItemList: List<ProductModel>, languageChanged: Boolean = false) {
+        val diffUtil = BucketDiffUtil(bucketProductList, newBucketItemList, languageChanged)
+        val diffResult = DiffUtil.calculateDiff(diffUtil)
+        bucketProductList =
+            if (newBucketItemList.isEmpty()) mutableListOf() else newBucketItemList as MutableList<ProductModel>
         diffResult.dispatchUpdatesTo(this)
     }
+
     inner class ProductWithImage(private val binding: ProductItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -53,30 +52,21 @@ class BucketAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 price.text = product.price.toString() + "₸"
                 image.load(product.image)
                 count.text = product.countInBucket.toString()
+                minusBtn.visibility = View.VISIBLE
+                count.visibility = View.VISIBLE
 
                 plusBtn.setOnClickListener {
-                    product.countInBucket+=1
                     ProductListManager.addToCart(product)
+                    notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
-                    product.countInBucket-=1
                     ProductListManager.removeFromCart(product)
                     if (product.countInBucket <= 0) {
-                        // Remove the item from the list if count is zero or negative
-                        productList.remove(product)
-                    }
-
-                    // Notify the adapter of the data change
-                    notifyDataSetChanged()
-                }
-
-                if (product.countInBucket > 0) {
-                    minusBtn.visibility = View.VISIBLE
-                    count.visibility = View.VISIBLE
-                } else {
-                    minusBtn.visibility = View.GONE
-                    count.visibility = View.GONE
+                        val newTempList = bucketProductList.toMutableList()
+                        newTempList.remove(product)
+                        setData(newTempList)
+                    } else notifyItemChanged(position)
                 }
             }
         }
@@ -91,37 +81,28 @@ class BucketAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 description.text = LanguageController.getProductLanguage(product, false)
                 price.text = product.price.toString() + "₸"
                 count.text = product.countInBucket.toString()
+                minusBtn.visibility = View.VISIBLE
+                count.visibility = View.VISIBLE
 
                 plusBtn.setOnClickListener {
-                    product.countInBucket+=1
                     ProductListManager.addToCart(product)
+                    notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
-                    product.countInBucket-=1
                     ProductListManager.removeFromCart(product)
                     if (product.countInBucket <= 0) {
-                        // Remove the item from the list if count is zero or negative
-                        productList.remove(product)
-                    }
-
-                    // Notify the adapter of the data change
-                    notifyDataSetChanged()
-                }
-
-                if (product.countInBucket > 0) {
-                    minusBtn.visibility = View.VISIBLE
-                    count.visibility = View.VISIBLE
-                } else {
-                    minusBtn.visibility = View.GONE
-                    count.visibility = View.GONE
+                        val newTempList = bucketProductList.toMutableList()
+                        newTempList.remove(product)
+                        setData(newTempList)
+                    } else notifyItemChanged(position)
                 }
             }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (productList[position].image != null) {
+        return if (bucketProductList[position].image != null) {
             CARD_WITH_IMAGE
         } else {
             CARD_WITHOUT_IMAGE
@@ -145,13 +126,12 @@ class BucketAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == CARD_WITH_IMAGE) {
-            (holder as ProductWithImage).bind(productList[position], position)
+            (holder as ProductWithImage).bind(bucketProductList[position], position)
         } else {
-            (holder as ProductWithOutImage).bind(productList[position], position)
+            (holder as ProductWithOutImage).bind(bucketProductList[position], position)
         }
     }
 
-    override fun getItemCount(): Int {
-        return productList.size
-    }
+    override fun getItemCount(): Int = bucketProductList.size
+
 }

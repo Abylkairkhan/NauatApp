@@ -1,6 +1,5 @@
 package com.example.nomad.data.network
 
-import android.util.Log
 import com.example.nomad.additional.Result
 import com.example.nomad.data.network.models.FoodTypeNetwork
 import com.example.nomad.data.network.models.MainMenuNetwork
@@ -13,18 +12,15 @@ import com.google.firebase.ktx.Firebase
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class NomadNetwork(
-) : INomadNetwork {
+class NomadNetwork : INomadNetwork {
 
     override suspend fun getMainMenu(): Result {
-        Log.d("MyLog", "getMainMenu")
         return suspendCoroutine { continuation ->
             val list = mutableListOf<MainMenuNetwork>()
             Firebase.firestore.collection("MainMenuEnglish")
                 .orderBy("id", Query.Direction.ASCENDING)
                 .get(Source.SERVER)
                 .addOnSuccessListener { resultCollection ->
-                    Log.d("MyLog", "getMainMenu success")
                     for (document in resultCollection) {
                         val mainMenuItem =
                             MainMenuNetwork(
@@ -74,7 +70,8 @@ class NomadNetwork(
     override suspend fun getFoodTypeByType(documentID: String): Result {
         return suspendCoroutine { continuation ->
             val list = mutableListOf<FoodTypeNetwork>()
-            val menuTypeReference = Firebase.firestore.collection("MainMenuEnglish").document(documentID)
+            val menuTypeReference =
+                Firebase.firestore.collection("MainMenuEnglish").document(documentID)
             Firebase.firestore.collection("FoodTypeEnglish")
                 .orderBy("id", Query.Direction.ASCENDING)
                 .whereEqualTo("menu_type", menuTypeReference)
@@ -106,9 +103,8 @@ class NomadNetwork(
                 .orderBy("id", Query.Direction.ASCENDING)
                 .get(Source.SERVER)
                 .addOnSuccessListener { resultCollection ->
-//                    Log.d("MyLog", "Success")
                     for (product in resultCollection) {
-                        val product = ProductNetwork(
+                        val productTemp = ProductNetwork(
                             product.get("id") as Long,
                             product.get("name_eng") as String,
                             product.get("name_rus") as String,
@@ -120,7 +116,7 @@ class NomadNetwork(
                             product.get("price") as Long,
                             product.get("food_type") as DocumentReference
                         )
-                        list.add(product)
+                        list.add(productTemp)
                     }
                     continuation.resume(Result.Success(list))
                 }
@@ -140,7 +136,7 @@ class NomadNetwork(
                 .get()
                 .addOnSuccessListener { resultCollection ->
                     for (product in resultCollection) {
-                        val product = ProductNetwork(
+                        val productTemp = ProductNetwork(
                             product.get("id") as Long,
                             product.get("name_eng") as String,
                             product.get("name_rus") as String,
@@ -152,7 +148,7 @@ class NomadNetwork(
                             product.get("price") as Long,
                             product.get("food_type") as DocumentReference
                         )
-                        list.add(product)
+                        list.add(productTemp)
                     }
                     continuation.resume(Result.Success(list))
                 }

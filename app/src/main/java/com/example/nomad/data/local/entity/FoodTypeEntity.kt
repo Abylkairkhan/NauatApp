@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.google.firebase.firestore.DocumentReference
 
 @Entity(tableName = "food_type_table")
-data class FoodTypeEntity (
+data class FoodTypeEntity(
     @PrimaryKey
     val id: Long,
     val documentId: String,

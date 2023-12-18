@@ -1,10 +1,6 @@
 <resources>
     <string name="app_name">Nauat</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="main_menu">Main Menu</string>
-    <string name="bar_menu">Bar Menu</string>
-    <string name="dessert_menu">Dessert Menu</string>
 
     <string name="clearEng">Clear bucket</string>
     <string name="clearRus">Очистить корзину</string>

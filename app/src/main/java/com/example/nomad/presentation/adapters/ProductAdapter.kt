@@ -1,36 +1,50 @@
-package com.example.nomad.domain.adapters
+package com.example.nomad.presentation.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.nomad.databinding.ProductItemBinding
 import com.example.nomad.databinding.ProductItemWithoutImgBinding
 import com.example.nomad.domain.models.ProductModel
-import com.example.nomad.domain.use_case.BillCounter
 import com.example.nomad.domain.use_case.LanguageController
 import com.example.nomad.domain.use_case.ProductListManager
 
 
 const val CARD_WITH_IMAGE = 0
 const val CARD_WITHOUT_IMAGE = 1
-const val CARD_DIVIDER = 2
 
 class ProductAdapter(
     val listener: Listener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var productList: List<ProductModel> = mutableListOf()
+    class ProductDiffUtil(
+        private val oldList: List<ProductModel>,
+        private val newList: List<ProductModel>,
+        private val languageChanged: Boolean
+    ) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int = oldList.size
 
-    fun updateItems() {
-        notifyDataSetChanged()
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            oldList[oldItemPosition].id == newList[newItemPosition].id
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            if (languageChanged) false
+            else oldList[oldItemPosition] == newList[newItemPosition]
+
     }
 
-    fun setItems(data: List<ProductModel>) {
-        productList = data
-        notifyDataSetChanged()
+    private var productList: List<ProductModel> = mutableListOf()
+
+    fun setData(newProductList: List<ProductModel>, languageChanged: Boolean = false) {
+        val diffUtil = ProductDiffUtil(productList, newProductList, languageChanged)
+        val diffResult = DiffUtil.calculateDiff(diffUtil)
+        productList = newProductList
+        diffResult.dispatchUpdatesTo(this)
     }
 
     inner class ProductWithImage(private val binding: ProductItemBinding) :
@@ -45,14 +59,14 @@ class ProductAdapter(
                 count.text = product.countInBucket.toString()
 
                 plusBtn.setOnClickListener {
-                    product.countInBucket +=1
+                    product.countInBucket += 1
                     ProductListManager.addToCart(product)
                     listener.onClick()
                     notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
-                    product.countInBucket -=1
+                    product.countInBucket -= 1
                     ProductListManager.removeFromCart(product)
                     listener.onClick()
                     notifyItemChanged(position)
@@ -80,14 +94,14 @@ class ProductAdapter(
                 count.text = product.countInBucket.toString()
 
                 plusBtn.setOnClickListener {
-                    product.countInBucket +=1
+                    product.countInBucket += 1
                     ProductListManager.addToCart(product)
                     listener.onClick()
                     notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
-                    product.countInBucket -=1
+                    product.countInBucket -= 1
                     ProductListManager.removeFromCart(product)
                     listener.onClick()
                     notifyItemChanged(position)
@@ -135,9 +149,9 @@ class ProductAdapter(
         }
     }
 
-    override fun getItemCount(): Int {
-        return productList.size
-    }
+    override fun getItemCount(): Int =
+        productList.size
+
 
     interface Listener {
         fun onClick()

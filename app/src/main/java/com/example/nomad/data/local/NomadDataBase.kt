@@ -25,13 +25,6 @@ class NomadDataBase(
         db.mainMenuDao().insertMainMenuItem(data)
     }
 
-    suspend fun getFoodType(): Result {
-        val result = db.foodTypeDao().getAllFoodType()
-        return if (result.isEmpty()) {
-            return Result.Failure("Local DataBase is Empty")
-        } else Result.Success(result)
-    }
-
     suspend fun getFoodTypeByType(type: String): Result {
         val result = db.foodTypeDao().getFoodTypeByType(type)
         return if (result.isEmpty()) {

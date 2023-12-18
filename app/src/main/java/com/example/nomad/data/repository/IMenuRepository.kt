@@ -5,7 +5,6 @@ import com.example.nomad.additional.Result
 import com.example.nomad.data.local.entity.FoodTypeEntity
 import com.example.nomad.data.local.entity.MainMenuEntity
 import com.example.nomad.data.local.entity.ProductEntity
-import com.example.nomad.domain.models.FoodTypeModel
 import com.example.nomad.domain.models.ProductModel
 
 interface IMenuRepository {
@@ -22,12 +21,7 @@ interface IMenuRepository {
 
     suspend fun insertProductDataBase(productEntity: ProductEntity)
 
-
-
-    suspend fun fetchFoodType(): Result
-
     suspend fun fetchProduct(context: Context): Result
-
 
     suspend fun getFoodTypePosition(documentID: String): Int
 
