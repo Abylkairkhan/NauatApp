@@ -9,7 +9,6 @@ import com.example.nomad.additional.Result
 import com.example.nomad.data.local.entity.FoodTypeEntity
 import com.example.nomad.data.local.entity.MainMenuEntity
 import com.example.nomad.data.local.entity.ProductEntity
-import com.example.nomad.data.repository.IMenuRepository
 import com.example.nomad.data.use_case.FoodTypeConverter
 import com.example.nomad.data.use_case.MainMenuConverter
 import com.example.nomad.data.use_case.ProductConverter

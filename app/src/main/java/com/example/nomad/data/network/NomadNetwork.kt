@@ -159,27 +159,6 @@ class NomadNetwork : INomadNetwork {
     }
 
     override suspend fun insertProduct() {
-//        val list = listOf<ProductNetwork2>(
-//
-//        )
-//
-//        for (data in list) {
-//            Firebase.firestore.collection("ProductEnglish")
-//                .add(data)
-//        }
 
     }
 }
-
-//data class ProductNetwork2(
-//    val id: Long,
-//    val name_eng: String,
-//    val name_rus: String,
-//    val name_kaz: String,
-//    val overview_eng: String,
-//    val overview_rus: String,
-//    val overview_kaz: String,
-//    val price: Long,
-//    val image: String,
-//    val food_type: DocumentReference
-//)

@@ -14,10 +14,10 @@ interface ProductDao {
     @Query("SELECT * FROM product_table ORDER BY id ASC")
     suspend fun getAllProduct(): List<ProductEntity>
 
-    @Query("SELECT * FROM product_table WHERE food_type = :foodType")
+    @Query("SELECT * FROM product_table WHERE foodType = :foodType")
     suspend fun getProductByType(foodType: String): List<ProductEntity>
 
-    @Query("SELECT id FROM product_table WHERE food_type = :foodType ORDER BY id ASC LIMIT 1")
+    @Query("SELECT id FROM product_table WHERE foodType = :foodType ORDER BY id ASC LIMIT 1")
     suspend fun getProductID(foodType: String): Int
 
     @Query("SELECT * FROM product_table WHERE nameEng LIKE '%' || :searchPattern || '%'")

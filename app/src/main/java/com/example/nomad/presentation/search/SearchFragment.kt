@@ -12,8 +12,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nomad.R
 import com.example.nomad.databinding.FragmentSearchBinding
-import com.example.nomad.presentation.adapters.ProductAdapter
 import com.example.nomad.domain.use_case.LanguageController
+import com.example.nomad.presentation.adapters.ProductAdapter
 import com.example.nomad.presentation.main.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

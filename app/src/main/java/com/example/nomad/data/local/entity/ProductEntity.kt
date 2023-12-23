@@ -17,5 +17,5 @@ data class ProductEntity(
     var overviewKaz: String,
     var image: Bitmap?,
     var price: Long,
-    var food_type: DocumentReference
+    var foodType: DocumentReference
 )

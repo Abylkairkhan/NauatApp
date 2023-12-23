@@ -18,7 +18,7 @@ object ProductConverter {
             overviewKaz = entity.overviewKaz,
             image = entity.image,
             price = entity.price,
-            food_type = entity.food_type
+            foodType = entity.foodType
         )
     }
 
@@ -33,7 +33,7 @@ object ProductConverter {
             overviewKaz = model.overviewKaz,
             image = model.image,
             price = model.price,
-            food_type = model.food_type
+            foodType = model.foodType
         )
     }
 
@@ -49,7 +49,7 @@ object ProductConverter {
             overviewKaz = network.overviewKaz,
             image = image,
             price = network.price,
-            food_type = network.food_type
+            foodType = network.foodType
         )
     }
 

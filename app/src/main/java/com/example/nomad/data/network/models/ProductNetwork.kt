@@ -12,5 +12,5 @@ data class ProductNetwork(
     var overviewKaz: String,
     var image: String,
     var price: Long,
-    var food_type: DocumentReference
+    var foodType: DocumentReference
 )
