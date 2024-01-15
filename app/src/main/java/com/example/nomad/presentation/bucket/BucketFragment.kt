@@ -7,27 +7,33 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.nomad.R
 import com.example.nomad.databinding.FragmentBucketBinding
-import com.example.nomad.domain.use_case.LanguageController
-import com.example.nomad.domain.use_case.ProductListManager
+import com.example.nomad.domain.models.ProductModel
+import com.example.nomad.domain.usecase.LanguageController
+import com.example.nomad.domain.usecase.ProductListManager
 import com.example.nomad.presentation.adapters.BucketAdapter
+import com.example.nomad.presentation.main.MainFragmentDirections
 
-class BucketFragment : Fragment() {
+class BucketFragment : Fragment(), BucketAdapter.Listener {
 
     private lateinit var binding: FragmentBucketBinding
-    private var productAdapter: BucketAdapter = BucketAdapter()
+    private var productAdapter: BucketAdapter = BucketAdapter(this)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        productAdapter.setData(ProductListManager.getCartItems())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentBucketBinding.inflate(inflater, container, false)
-        binding.orderText.text = getString(LanguageController.getOrder())
-        binding.ClearButton.text = getString(LanguageController.getClear())
+
+        initRecViewAndText()
+
         backButton()
         clearButtonClick()
-        initRecView()
 
         return binding.root
     }
@@ -39,15 +45,23 @@ class BucketFragment : Fragment() {
         }
     }
 
-    private fun initRecView() {
-        productAdapter.setData(ProductListManager.getCartItems())
-        binding.RecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.RecyclerView.adapter = productAdapter
+    private fun initRecViewAndText() {
+        with(binding) {
+            RecyclerView.layoutManager = LinearLayoutManager(requireContext())
+            RecyclerView.adapter = productAdapter
+            orderText.text = getString(LanguageController.getOrder())
+            ClearButton.text = getString(LanguageController.getClear())
+        }
     }
 
     private fun backButton() {
         binding.backButton.setOnClickListener {
-            Navigation.findNavController(requireView()).navigate(R.id.bucket_to_main)
+            Navigation.findNavController(requireView()).popBackStack()
         }
+    }
+
+    override fun onClick(product: ProductModel) {
+        val action = BucketFragmentDirections.bucketToProduct(product.id)
+        Navigation.findNavController(requireView()).navigate(action)
     }
 }

@@ -1,4 +1,4 @@
-package com.example.nomad.domain.use_case
+package com.example.nomad.domain.usecase
 
 import com.example.nomad.domain.models.ProductModel
 
@@ -6,9 +6,8 @@ object ProductListManager {
 
     private val cartItems: MutableList<ProductModel> = mutableListOf()
 
-    fun getCartItems(): List<ProductModel> {
-        return cartItems.toList()
-    }
+    fun getCartItems(): List<ProductModel> =
+        cartItems.toList()
 
     fun addToCart(product: ProductModel) {
         val existingItem = cartItems.find { it.id == product.id }

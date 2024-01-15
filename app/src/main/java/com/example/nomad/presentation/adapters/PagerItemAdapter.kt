@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.nomad.R
 import com.example.nomad.databinding.PagerItemBinding
 import com.example.nomad.domain.models.FoodTypeModel
-import com.example.nomad.domain.use_case.LanguageController
+import com.example.nomad.domain.usecase.LanguageController
 
 private var selectedPosition: Int = 0
 
@@ -60,12 +60,12 @@ class PagerItemAdapter(
 
         fun bind(foodType: FoodTypeModel, drawable: Drawable, position: Int, listener: Listener) =
             with(binding) {
+//                binding.textView.width
                 textView.text = LanguageController.getFoodTypeLanguage(foodType)
                 textView.background = drawable
 
                 itemView.setOnClickListener {
-                    if (position != selectedPosition) listener.onClick(foodType)
-                    listener.onItemPosition(position)
+                    if (position != selectedPosition) listener.onClick(foodType, position)
                 }
             }
     }
@@ -99,7 +99,6 @@ class PagerItemAdapter(
     }
 
     interface Listener {
-        fun onClick(foodType: FoodTypeModel)
-        fun onItemPosition(position: Int)
+        fun onClick(foodType: FoodTypeModel, position: Int)
     }
 }

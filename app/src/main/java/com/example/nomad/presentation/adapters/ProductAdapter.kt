@@ -1,5 +1,6 @@
 package com.example.nomad.presentation.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,8 @@ import coil.load
 import com.example.nomad.databinding.ProductItemBinding
 import com.example.nomad.databinding.ProductItemWithoutImgBinding
 import com.example.nomad.domain.models.ProductModel
-import com.example.nomad.domain.use_case.LanguageController
-import com.example.nomad.domain.use_case.ProductListManager
+import com.example.nomad.domain.usecase.LanguageController
+import com.example.nomad.domain.usecase.ProductListManager
 
 
 const val CARD_WITH_IMAGE = 0
@@ -40,6 +41,29 @@ class ProductAdapter(
 
     private var productList: List<ProductModel> = mutableListOf()
 
+    fun synchronizeCartWithProductList() {
+        val cartItems = ProductListManager.getCartItems()
+
+        productList.forEachIndexed { productListPosition, product ->
+            // Check if the product is in the cartItems
+            val isProductInCart = cartItems.any { it.id == product.id }
+
+            if (isProductInCart) {
+                // If the product is in the cart, update countInBucket if needed
+                cartItems.find { it.id == product.id }?.let { cartProduct ->
+                    if (product.countInBucket != cartProduct.countInBucket) {
+                        product.countInBucket = cartProduct.countInBucket
+                        notifyItemChanged(productListPosition)
+                    }
+                }
+            } else if (product.countInBucket >= 1) {
+                // If the product is not in the cart and countInBucket is >= 1, reset to 0
+                product.countInBucket = 0
+                notifyItemChanged(productListPosition)
+            }
+        }
+    }
+
     fun setData(newProductList: List<ProductModel>, languageChanged: Boolean = false) {
         val diffUtil = ProductDiffUtil(productList, newProductList, languageChanged)
         val diffResult = DiffUtil.calculateDiff(diffUtil)
@@ -51,6 +75,11 @@ class ProductAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(product: ProductModel, position: Int) {
+
+            binding.productContainer.setOnClickListener {
+                listener.onItemClick(product, position)
+            }
+
             with(binding) {
                 title.text = LanguageController.getProductLanguage(product, true)
                 description.text = LanguageController.getProductLanguage(product, false)
@@ -61,14 +90,14 @@ class ProductAdapter(
                 plusBtn.setOnClickListener {
                     product.countInBucket += 1
                     ProductListManager.addToCart(product)
-                    listener.onClick()
+                    listener.onButtonClick()
                     notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
                     product.countInBucket -= 1
                     ProductListManager.removeFromCart(product)
-                    listener.onClick()
+                    listener.onButtonClick()
                     notifyItemChanged(position)
                 }
 
@@ -87,6 +116,11 @@ class ProductAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(product: ProductModel, position: Int) {
+
+            binding.productContainer.setOnClickListener {
+                listener.onItemClick(product, position)
+            }
+
             with(binding) {
                 title.text = LanguageController.getProductLanguage(product, true)
                 description.text = LanguageController.getProductLanguage(product, false)
@@ -96,14 +130,14 @@ class ProductAdapter(
                 plusBtn.setOnClickListener {
                     product.countInBucket += 1
                     ProductListManager.addToCart(product)
-                    listener.onClick()
+                    listener.onButtonClick()
                     notifyItemChanged(position)
                 }
 
                 minusBtn.setOnClickListener {
                     product.countInBucket -= 1
                     ProductListManager.removeFromCart(product)
-                    listener.onClick()
+                    listener.onButtonClick()
                     notifyItemChanged(position)
                 }
 
@@ -154,6 +188,8 @@ class ProductAdapter(
 
 
     interface Listener {
-        fun onClick()
+        fun onButtonClick()
+
+        fun onItemClick(product: ProductModel, position: Int)
     }
 }

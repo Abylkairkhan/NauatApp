@@ -1,4 +1,4 @@
-package com.example.nomad.domain.use_case
+package com.example.nomad.domain.usecase
 
 import com.example.nomad.R
 import com.example.nomad.domain.models.FoodTypeModel

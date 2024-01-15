@@ -166,10 +166,6 @@ class MenuRepositoryImpl(
         }
     }
 
-    override suspend fun getFoodTypePosition(documentID: String): Int {
-        return nomadDataBase.getFoodTypePosition(documentID)
-    }
-
     override suspend fun fetchProductByPattern(
         pattern: String
     ): MutableList<ProductModel> {
@@ -190,6 +186,20 @@ class MenuRepositoryImpl(
         return result
     }
 
+    override suspend fun fetchProductByID(id: Long, context: Context): Result {
+        return when (val localData = nomadDataBase.getProductByID(id)) {
+            is Result.Success<*> -> {
+                val entityData = localData.data as ProductEntity
+                Result.Success(ProductConverter.entityToModel(entityData))
+            }
+
+            is Result.Failure<*> -> {
+                Result.Failure("Didn't find any product")
+            }
+        }
+    }
+
+    //    Used for inserting data to Firestore
     override suspend fun insert() {
         nomadNetwork.insertProduct()
     }

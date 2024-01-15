@@ -6,7 +6,7 @@ import com.example.nomad.data.local.db.MainDataBase
 import com.example.nomad.data.local.entity.FoodTypeEntity
 import com.example.nomad.data.local.entity.MainMenuEntity
 import com.example.nomad.data.local.entity.ProductEntity
-import com.example.nomad.domain.use_case.LanguageController
+import com.example.nomad.domain.usecase.LanguageController
 
 class NomadDataBase(
     val context: Context
@@ -54,16 +54,24 @@ class NomadDataBase(
         db.productDao().insertProduct(data)
     }
 
-    suspend fun getFoodTypePosition(documentID: String): Int {
-        return db.productDao().getProductID("FoodTypeEnglish/$documentID")
-    }
-
     suspend fun getProductByPattern(pattern: String): Result {
         val result = when (LanguageController.getLanguage()) {
             LanguageController.Language.RUS -> db.productDao().getProductsRus(pattern)
             LanguageController.Language.KAZ -> db.productDao().getProductsKaz(pattern)
             LanguageController.Language.ENG -> db.productDao().getProductsEng(pattern)
         }
-        return Result.Success(result)
+        return if (result.isEmpty()) {
+            Result.Failure("Didn't find any product by name")
+        } else
+            Result.Success(result)
+    }
+
+    suspend fun getProductByID(id: Long): Result {
+        return try {
+            val result = db.productDao().getProductByID(id)
+            Result.Success(result)
+        } catch (e: Exception) {
+            Result.Failure(e.message)
+        }
     }
 }

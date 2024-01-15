@@ -28,4 +28,8 @@ interface ProductDao {
 
     @Query("SELECT * FROM product_table WHERE nameKaz LIKE '%' || :searchPattern || '%'")
     suspend fun getProductsKaz(searchPattern: String): List<ProductEntity>
+
+    @Query("SELECT * FROM product_table WHERE id = :productID")
+    suspend fun getProductByID(productID: Long): ProductEntity
+
 }

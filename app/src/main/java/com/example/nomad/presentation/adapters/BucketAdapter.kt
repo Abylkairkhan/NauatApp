@@ -9,10 +9,12 @@ import coil.load
 import com.example.nomad.databinding.ProductItemBinding
 import com.example.nomad.databinding.ProductItemWithoutImgBinding
 import com.example.nomad.domain.models.ProductModel
-import com.example.nomad.domain.use_case.LanguageController
-import com.example.nomad.domain.use_case.ProductListManager
+import com.example.nomad.domain.usecase.LanguageController
+import com.example.nomad.domain.usecase.ProductListManager
 
-class BucketAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class BucketAdapter(
+    val listener: Listener
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class BucketDiffUtil(
         private val oldList: List<ProductModel>,
@@ -28,7 +30,9 @@ class BucketAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
             if (languageChanged) false
-            else oldList[oldItemPosition] == newList[newItemPosition]
+            else
+                oldList[oldItemPosition].countInBucket == newList[newItemPosition].countInBucket
+
 
     }
 
@@ -47,6 +51,11 @@ class BucketAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun bind(product: ProductModel, position: Int) {
             with(binding) {
+
+                productContainer.setOnClickListener {
+                    listener.onClick(product)
+                }
+
                 title.text = LanguageController.getProductLanguage(product, true)
                 description.text = LanguageController.getProductLanguage(product, false)
                 price.text = product.price.toString() + "₸"
@@ -66,7 +75,9 @@ class BucketAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         val newTempList = bucketProductList.toMutableList()
                         newTempList.remove(product)
                         setData(newTempList)
-                    } else notifyItemChanged(position)
+                    } else
+                        setData(ProductListManager.getCartItems(), true)
+
                 }
             }
         }
@@ -76,7 +87,13 @@ class BucketAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(product: ProductModel, position: Int) {
+
             with(binding) {
+
+                productContainer.setOnClickListener {
+                    listener.onClick(product)
+                }
+
                 title.text = LanguageController.getProductLanguage(product, true)
                 description.text = LanguageController.getProductLanguage(product, false)
                 price.text = product.price.toString() + "₸"
@@ -95,7 +112,8 @@ class BucketAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         val newTempList = bucketProductList.toMutableList()
                         newTempList.remove(product)
                         setData(newTempList)
-                    } else notifyItemChanged(position)
+                    } else
+                        setData(ProductListManager.getCartItems(), true)
                 }
             }
         }
@@ -133,5 +151,9 @@ class BucketAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int = bucketProductList.size
+
+    interface Listener {
+        fun onClick(product: ProductModel)
+    }
 
 }

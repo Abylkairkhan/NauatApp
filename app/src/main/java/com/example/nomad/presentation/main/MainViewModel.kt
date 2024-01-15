@@ -1,11 +1,13 @@
 package com.example.nomad.presentation.main
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nomad.additional.Result
+import com.example.nomad.additional.TopScrollView
 import com.example.nomad.data.local.entity.FoodTypeEntity
 import com.example.nomad.data.local.entity.MainMenuEntity
 import com.example.nomad.data.local.entity.ProductEntity

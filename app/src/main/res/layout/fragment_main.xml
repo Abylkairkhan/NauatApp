@@ -55,7 +55,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginHorizontal="5dp"
-                            android:background="@drawable/selected_item_bg"
+                            android:background="@drawable/unselected_item_bg"
                             android:elevation="20dp">
 
                             <LinearLayout
@@ -178,11 +178,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/RecView1"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="65dp"
             android:layout_gravity="center_horizontal"
             android:background="@color/main"
             android:orientation="horizontal"
-            android:paddingTop="5dp"
+            android:paddingVertical="5dp"
             android:scrollbars="none"
             tools:listitem="@layout/pager_item" />
 

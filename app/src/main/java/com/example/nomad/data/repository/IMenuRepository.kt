@@ -23,9 +23,9 @@ interface IMenuRepository {
 
     suspend fun fetchProduct(context: Context): Result
 
-    suspend fun getFoodTypePosition(documentID: String): Int
-
     suspend fun fetchProductByPattern(pattern: String): MutableList<ProductModel>
+
+    suspend fun fetchProductByID(id: Long, context: Context): Result
 
     suspend fun insert()
 }
