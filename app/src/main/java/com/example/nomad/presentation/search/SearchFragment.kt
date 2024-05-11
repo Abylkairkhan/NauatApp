@@ -90,9 +90,18 @@ class SearchFragment : Fragment(), ProductAdapter.Listener {
     private fun observeProductList() {
         viewModel.productList.observe(viewLifecycleOwner) {
             with(binding) {
+                RecyclerView.visibility = View.VISIBLE
+                errorTextView.visibility = View.GONE
                 productAdapter.setData(viewModel.productList.value!!)
                 RecyclerView.scrollToPosition(clickedProductPosition)
                 RecyclerView.adapter = productAdapter
+            }
+        }
+        viewModel.error.observe(viewLifecycleOwner) {
+            with(binding) {
+                RecyclerView.visibility = View.GONE
+                errorTextView.visibility = View.VISIBLE
+                errorTextView.text = getString(LanguageController.getPatternFindError())
             }
         }
     }

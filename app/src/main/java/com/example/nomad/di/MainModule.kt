@@ -11,6 +11,7 @@ import com.example.nomad.domain.usecase.GetProductByID
 import com.example.nomad.domain.usecase.GetProductByPattern
 import com.example.nomad.domain.usecase.GetProductByType
 import com.example.nomad.domain.usecase.GetProducts
+import com.example.nomad.domain.usecase.GetServePercentage
 import com.example.nomad.domain.usecase.InsertLocalData
 import com.example.nomad.presentation.detail.ProductDetailViewModel
 import com.example.nomad.presentation.main.MainViewModel
@@ -40,9 +41,11 @@ val mainModule = module {
 
     single { GetProductByID(get()) }
 
+    single { GetServePercentage(get()) }
+
     single { InsertLocalData(get()) }
 
-    viewModel { MainViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { MainViewModel(get(), get(), get(), get(), get(), get(), get()) }
 
     viewModel { ProductDetailViewModel(get()) }
 

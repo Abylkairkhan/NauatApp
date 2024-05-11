@@ -27,5 +27,7 @@ interface IMenuRepository {
 
     suspend fun fetchProductByID(id: Long, context: Context): Result
 
+    suspend fun fetchPercentageForServe(): Result
+
     suspend fun insert()
 }

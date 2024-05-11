@@ -11,7 +11,7 @@ interface ProductDao {
     @Insert(onConflict = 5)
     suspend fun insertProduct(data: ProductEntity)
 
-    @Query("SELECT * FROM product_table ORDER BY id ASC")
+    @Query("SELECT * FROM product_table ORDER BY id ASC LIMIT 30")
     suspend fun getAllProduct(): List<ProductEntity>
 
     @Query("SELECT * FROM product_table WHERE foodType = :foodType")

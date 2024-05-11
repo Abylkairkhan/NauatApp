@@ -1,6 +1,7 @@
 package com.example.nomad.presentation.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +40,7 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
         pagerItemAdapter = PagerItemAdapter(requireContext(), this)
         productAdapter = ProductAdapter(this)
 
+        viewModel.fetchServePercentage()
         viewModel.fetchMainMenu(requireContext())
         viewModel.fetchFoodTypeByID("main_menu")
         viewModel.fetchProductByID("xNHfOIs4zqbi0SeED9Qv", requireContext())
@@ -65,7 +67,6 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
         }
 
         productAdapter?.synchronizeCartWithProductList()
-        centerClickedPagerItem()
         navigationToBucket()
         navigationToSearch()
         showOrHideBill()
@@ -87,6 +88,9 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
                 textView2.text = LanguageController.getMainMenuLanguage(list[1])
                 imgView3.load(list[2].image)
                 textView3.text = LanguageController.getMainMenuLanguage(list[2])
+                servePercent.text =
+                    getString(LanguageController.getServePercentage()) + " " + ProductListManager.getServePercentage()
+                        .toString() + "%"
             }
         }
 
@@ -96,7 +100,7 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
 
             fetchSelectedProducts()
 
-            binding.RecView1.smoothScrollToPosition(currentFoodTypePosition)
+            binding.RecView1.scrollToPosition(currentFoodTypePosition)
             binding.RecView1.adapter = pagerItemAdapter
         }
 
@@ -113,28 +117,15 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
         }
 
         viewModel.error.observe(viewLifecycleOwner) {
+            Log.d("MyLog", it)
             Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
         }
     }
 
     private fun fetchSelectedProducts() {
-
         val foodType = viewModel.foodTypeList.value?.get(currentFoodTypePosition)
-        if (foodType != null) {
-//            Log.d("MyLog", foodType.nameRus)
+        if (foodType != null)
             viewModel.fetchProductByID(foodType.documentId, requireContext())
-        }
-
-//        when (currentTab) {
-//            TopScrollView.MAIN ->
-//                viewModel.fetchProductByID("xNHfOIs4zqbi0SeED9Qv", requireContext())
-//
-//            TopScrollView.BAR ->
-//                viewModel.fetchProductByID("YJXfRYmqQoKzYkx6PfoU", requireContext())
-//
-//            TopScrollView.DESSERT ->
-//                viewModel.fetchProductByID("L2gSp5IH9Xhtn3iL7QKP", requireContext())
-//        }
     }
 
     private fun fetchSelectedTabFoodType() {
@@ -174,6 +165,7 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
 
     private fun scrollBarListener(tab: TopScrollView) {
         currentFoodTypePosition = 0
+        lastClickedProduct = 0
         if (currentTab != tab) {
             when (currentTab) {
                 TopScrollView.MAIN -> {
@@ -197,15 +189,10 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
         }
     }
 
-    private fun centerClickedPagerItem() {
-//        val snapHelper = LinearSnapHelper()
-//        snapHelper.attachToRecyclerView(binding.RecView1)
-    }
-
     override fun onClick(foodType: FoodTypeModel, position: Int) {
+        lastClickedProduct = 0
         viewModel.fetchProductByID(foodType.documentId, requireContext())
         pagerItemAdapter!!.selectItem(position)
-        centerClickedPagerItem()
         with(binding) {
             ProgressBar.visibility = View.VISIBLE
             RecView2.visibility = View.GONE
@@ -267,6 +254,10 @@ class MainFragment : Fragment(), PagerItemAdapter.Listener, ProductAdapter.Liste
                     textView2.text = LanguageController.getMainMenuLanguage(list[1])
                     textView3.text = LanguageController.getMainMenuLanguage(list[2])
                 }
+
+                servePercent.text =
+                    getString(LanguageController.getServePercentage()) + " " + ProductListManager.getServePercentage()
+                        .toString() + "%"
 
                 pagerItemAdapter!!.setData(viewModel.foodTypeList.value!!, true)
                 productAdapter!!.setData(viewModel.productList.value!!, true)

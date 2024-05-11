@@ -1,10 +1,19 @@
 package com.example.nomad.domain.usecase
 
+import android.util.Log
 import com.example.nomad.domain.models.ProductModel
+import kotlin.math.ceil
 
 object ProductListManager {
 
     private val cartItems: MutableList<ProductModel> = mutableListOf()
+    private var servePercentage = 0
+
+    fun setServePercentage(percentage: Long) {
+        servePercentage = percentage.toInt()
+    }
+
+    fun getServePercentage(): Int = servePercentage
 
     fun getCartItems(): List<ProductModel> =
         cartItems.toList()
@@ -35,9 +44,9 @@ object ProductListManager {
 
     fun getBill(): Long {
         var totalBill = 0L
-        for (item in cartItems) {
+        for (item in cartItems)
             totalBill += item.price * item.countInBucket
-        }
+
         return totalBill
     }
 

@@ -13,6 +13,7 @@ class NomadDataBase(
 ) {
 
     private val db = MainDataBase.getDataBase(context)
+    private val sharedPref = context.getSharedPreferences("ServePercent", Context.MODE_PRIVATE)
 
     suspend fun getMainMenuEng(): Result {
         val result = db.mainMenuDao().getAllMainMenu()
@@ -73,5 +74,21 @@ class NomadDataBase(
         } catch (e: Exception) {
             Result.Failure(e.message)
         }
+    }
+
+    suspend fun insertPercentageForServe(percent: Long) {
+        val editor = sharedPref.edit()
+        editor.apply {
+            putLong("percent", percent)
+            apply()
+        }
+    }
+
+    suspend fun getPercentageForServe(): Result {
+        val percent = sharedPref.getLong("percent", 1)
+        return if (percent.toInt() == 1)
+            Result.Failure("Local storage empty")
+        else
+            Result.Success(percent)
     }
 }

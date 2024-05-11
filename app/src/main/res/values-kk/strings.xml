@@ -21,4 +21,19 @@
     <string name="eng">ENG</string>
     <string name="rus">RUS</string>
     <string name="kaz">KAZ</string>
+
+    <string name="addToCartEng">Add to Cart</string>
+    <string name="addToCartRus">Добавить в корзину</string>
+    <string name="addToCartKaz">Тапсырысқа қосу</string>
+
+    <string name="servePercentEng">Percentage for service - </string>
+    <string name="servePercentRus">Процент за обслуживание - </string>
+    <string name="servePercentKaz">Қызмет көрсету үшін пайыз - </string>
+
+    <string name="didntFindAnyProductEng">No results were found for your request</string>
+    <string name="didntFindAnyProductRus">По вашему запросу ничего не найдено</string>
+    <string name="didntFindAnyProductKaz">Сұрауыңыз бойынша нәтижелер табылмады</string>
+
+    <string name="admin_description">Uses for unlock kiosk mode</string>
+
 </resources>

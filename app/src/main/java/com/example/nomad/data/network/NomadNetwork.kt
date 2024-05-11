@@ -41,11 +41,14 @@ class NomadNetwork : INomadNetwork {
         }
     }
 
-    override suspend fun getFoodType(): Result {
+    override suspend fun getFoodTypeByType(documentID: String): Result {
         return suspendCoroutine { continuation ->
             val list = mutableListOf<FoodTypeNetwork>()
+            val menuTypeReference =
+                Firebase.firestore.collection("MainMenuEnglish").document(documentID)
             Firebase.firestore.collection("FoodTypeEnglish")
                 .orderBy("id", Query.Direction.ASCENDING)
+                .whereEqualTo("menu_type", menuTypeReference)
                 .get(Source.SERVER)
                 .addOnSuccessListener { resultCollection ->
                     for (document in resultCollection) {
@@ -67,14 +70,43 @@ class NomadNetwork : INomadNetwork {
         }
     }
 
-    override suspend fun getFoodTypeByType(documentID: String): Result {
+    override suspend fun getProductByType(foodTypeID: String): Result {
+        return suspendCoroutine { continuation ->
+            val list = mutableListOf<ProductNetwork>()
+            val foodTypeRef = Firebase.firestore.collection("FoodTypeEnglish").document(foodTypeID)
+            Firebase.firestore.collection("ProductEnglish")
+                .orderBy("id", Query.Direction.ASCENDING)
+                .whereEqualTo("food_type", foodTypeRef)
+                .get()
+                .addOnSuccessListener { resultCollection ->
+                    for (product in resultCollection) {
+                        val productTemp = ProductNetwork(
+                            product.get("id") as Long,
+                            product.get("name_eng") as String,
+                            product.get("name_rus") as String,
+                            product.get("name_kaz") as String,
+                            product.get("overview_eng") as String,
+                            product.get("overview_rus") as String,
+                            product.get("overview_kaz") as String,
+                            product.get("image") as String,
+                            product.get("price") as Long,
+                            product.get("food_type") as DocumentReference
+                        )
+                        list.add(productTemp)
+                    }
+                    continuation.resume(Result.Success(list))
+                }
+                .addOnFailureListener { exception ->
+                    continuation.resume(Result.Failure(exception.message))
+                }
+        }
+    }
+
+    override suspend fun getFoodType(): Result {
         return suspendCoroutine { continuation ->
             val list = mutableListOf<FoodTypeNetwork>()
-            val menuTypeReference =
-                Firebase.firestore.collection("MainMenuEnglish").document(documentID)
             Firebase.firestore.collection("FoodTypeEnglish")
                 .orderBy("id", Query.Direction.ASCENDING)
-                .whereEqualTo("menu_type", menuTypeReference)
                 .get(Source.SERVER)
                 .addOnSuccessListener { resultCollection ->
                     for (document in resultCollection) {
@@ -126,31 +158,12 @@ class NomadNetwork : INomadNetwork {
         }
     }
 
-    override suspend fun getProductByType(productID: String): Result {
+    override suspend fun getPercentageForServe(): Result {
         return suspendCoroutine { continuation ->
-            val list = mutableListOf<ProductNetwork>()
-            val foodTypeRef = Firebase.firestore.collection("FoodTypeEnglish").document(productID)
-            Firebase.firestore.collection("ProductEnglish")
-                .orderBy("id", Query.Direction.ASCENDING)
-                .whereEqualTo("food_type", foodTypeRef)
-                .get()
-                .addOnSuccessListener { resultCollection ->
-                    for (product in resultCollection) {
-                        val productTemp = ProductNetwork(
-                            product.get("id") as Long,
-                            product.get("name_eng") as String,
-                            product.get("name_rus") as String,
-                            product.get("name_kaz") as String,
-                            product.get("overview_eng") as String,
-                            product.get("overview_rus") as String,
-                            product.get("overview_kaz") as String,
-                            product.get("image") as String,
-                            product.get("price") as Long,
-                            product.get("food_type") as DocumentReference
-                        )
-                        list.add(productTemp)
-                    }
-                    continuation.resume(Result.Success(list))
+            Firebase.firestore.collection("Percentage").document("Serve")
+                .get(Source.SERVER)
+                .addOnSuccessListener {
+                    continuation.resume(Result.Success(it.get("amount") as Long))
                 }
                 .addOnFailureListener { exception ->
                     continuation.resume(Result.Failure(exception.message))

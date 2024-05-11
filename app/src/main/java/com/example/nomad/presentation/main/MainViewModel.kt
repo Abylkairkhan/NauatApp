@@ -22,7 +22,9 @@ import com.example.nomad.domain.usecase.GetMainMenuData
 import com.example.nomad.domain.usecase.GetProductByPattern
 import com.example.nomad.domain.usecase.GetProductByType
 import com.example.nomad.domain.usecase.GetProducts
+import com.example.nomad.domain.usecase.GetServePercentage
 import com.example.nomad.domain.usecase.InsertLocalData
+import com.example.nomad.domain.usecase.ProductListManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -32,7 +34,8 @@ class MainViewModel(
     private val getProductByType: GetProductByType,
     private val getProducts: GetProducts,
     private val getProductByPattern: GetProductByPattern,
-    private val insertLocalData: InsertLocalData
+    private val insertLocalData: InsertLocalData,
+    private val getServePercentage: GetServePercentage
 ) : ViewModel() {
 
     private var _mainMenuList = MutableLiveData<List<MainMenuModel>>()
@@ -125,7 +128,7 @@ class MainViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val result = getProductByPattern.execute(pattern)
             if (result.isEmpty()) {
-                _error.postValue("MainViewModel cant take data from Repository")
+                _error.postValue("Didn't find any product")
             } else {
                 _productList.postValue(result)
             }
@@ -139,6 +142,19 @@ class MainViewModel(
                     _productList.postValue(result.data as List<ProductModel>)
                 }
 
+                is Result.Failure<*> -> {
+                    _error.postValue(result.error as String)
+                }
+            }
+        }
+    }
+
+    fun fetchServePercentage() {
+        viewModelScope.launch(Dispatchers.IO) {
+            when (val result = getServePercentage.execute()) {
+                is Result.Success<*> -> {
+                    ProductListManager.setServePercentage(result.data as Long)
+                }
                 is Result.Failure<*> -> {
                     _error.postValue(result.error as String)
                 }

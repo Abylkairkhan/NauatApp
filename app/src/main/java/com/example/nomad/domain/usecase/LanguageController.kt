@@ -86,6 +86,30 @@ object LanguageController {
         }
     }
 
+    fun getAddToCartLang(): Int {
+        return when (currentLanguage) {
+            Language.RUS -> R.string.addToCartRus
+            Language.KAZ -> R.string.addToCartKaz
+            Language.ENG -> R.string.addToCartEng
+        }
+    }
+
+    fun getServePercentage(): Int {
+        return when(currentLanguage) {
+            Language.RUS -> R.string.servePercentRus
+            Language.KAZ -> R.string.servePercentKaz
+            Language.ENG -> R.string.servePercentEng
+        }
+    }
+
+    fun getPatternFindError(): Int {
+        return when(currentLanguage) {
+            Language.RUS -> R.string.didntFindAnyProductRus
+            Language.KAZ -> R.string.didntFindAnyProductKaz
+            Language.ENG -> R.string.didntFindAnyProductEng
+        }
+    }
+
     fun getLanguage(): Language {
         return currentLanguage
     }

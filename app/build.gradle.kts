@@ -46,6 +46,7 @@ dependencies {
 
 //    FireBase
     implementation("com.google.firebase:firebase-firestore:24.9.1")
+    implementation("androidx.test:core-ktx:1.5.0")
 
 //    Navigation component
     val nav_version = "2.7.4"
@@ -64,14 +65,11 @@ dependencies {
 //    Koin
     implementation("io.insert-koin:koin-android:3.5.0")
 
-//    Paging
-    val paging_version = "3.2.1"
-    implementation("androidx.paging:paging-runtime:$paging_version")
-
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

@@ -14,6 +14,8 @@ interface INomadNetwork {
 
     suspend fun getAllProducts(): Result
 
+    suspend fun getPercentageForServe(): Result
+
     suspend fun insertProduct()
 
 }

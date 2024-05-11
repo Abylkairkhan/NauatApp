@@ -1,6 +1,7 @@
 package com.example.nomad.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.example.nomad.additional.Result
 import com.example.nomad.data.local.NomadDataBase
 import com.example.nomad.data.local.entity.FoodTypeEntity
@@ -101,7 +102,7 @@ class MenuRepositoryImpl(
             }
 
             is Result.Failure<*> -> {
-                when (val networkData = nomadNetwork.getProductByType(type)) {
+                return when (val networkData = nomadNetwork.getProductByType(type)) {
                     is Result.Success<*> -> {
                         val networkListData =
                             networkData.data as MutableList<ProductNetwork>
@@ -109,11 +110,11 @@ class MenuRepositoryImpl(
                             val tempModel = ProductConverter.networkToModel(item, context)
                             result.add(tempModel)
                         }
-                        return Result.Success(result)
+                        Result.Success(result)
                     }
 
                     is Result.Failure<*> -> {
-                        return Result.Failure(networkData.error as String)
+                        Result.Failure(networkData.error as String)
                     }
                 }
             }
@@ -195,6 +196,27 @@ class MenuRepositoryImpl(
 
             is Result.Failure<*> -> {
                 Result.Failure("Didn't find any product")
+            }
+        }
+    }
+
+    override suspend fun fetchPercentageForServe(): Result {
+        return when (val localData = nomadDataBase.getPercentageForServe()) {
+            is Result.Success<*> -> {
+                Result.Success(localData.data)
+            }
+
+            is Result.Failure<*> -> {
+                when(val networkData = nomadNetwork.getPercentageForServe()) {
+                    is Result.Success<*> -> {
+                        nomadDataBase.insertPercentageForServe(networkData.data as Long)
+                        Result.Success(networkData.data)
+                    }
+
+                    is Result.Failure<*> -> {
+                       Result.Failure(networkData.error as String)
+                    }
+                }
             }
         }
     }

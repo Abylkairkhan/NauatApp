@@ -18,6 +18,10 @@ class BitmapConverter {
     @TypeConverter
     fun fromByteArray(byteArray: ByteArray?): Bitmap? {
         if (byteArray == null) return null
-        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        return try {
+            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        } catch (e: Exception) {
+            null
+        }
     }
 }

@@ -12,7 +12,6 @@ import com.example.nomad.domain.models.ProductModel
 import com.example.nomad.domain.usecase.LanguageController
 import com.example.nomad.domain.usecase.ProductListManager
 import com.example.nomad.presentation.adapters.BucketAdapter
-import com.example.nomad.presentation.main.MainFragmentDirections
 
 class BucketFragment : Fragment(), BucketAdapter.Listener {
 
@@ -51,6 +50,9 @@ class BucketFragment : Fragment(), BucketAdapter.Listener {
             RecyclerView.adapter = productAdapter
             orderText.text = getString(LanguageController.getOrder())
             ClearButton.text = getString(LanguageController.getClear())
+            servePercent.text =
+                getString(LanguageController.getServePercentage()) + " " + ProductListManager.getServePercentage()
+                    .toString() + "%"
         }
     }
 

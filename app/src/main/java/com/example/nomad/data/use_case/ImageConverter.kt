@@ -12,19 +12,17 @@ import com.example.nomad.additional.Credentials
 object ImageConverter {
 
     suspend fun getBitmap(context: Context, url: String): Bitmap? {
+
         if (url.isEmpty()) return null
+
         val loading = ImageLoader(context)
         val request = ImageRequest.Builder(context)
             .data(Credentials.BASE_URL + url)
             .build()
 
-//        val result = (loading.execute(request) as SuccessResult).drawable
-//        return (result as BitmapDrawable).bitmap
-
         return when (val result = loading.execute(request)) {
             is SuccessResult -> (result.drawable as BitmapDrawable).bitmap
             is ErrorResult -> null
         }
-
     }
 }
